@@ -28,11 +28,25 @@ module Users
     end
 
     def user
-      @user ||= User.find_by(omniauth_params.slice(:provider, :uid).to_h)
+      @user ||= find_user_by_uid || find_and_set_user_by_email
     end
 
     def omniauth_params
       request.env['omniauth.auth']
+    end
+
+    def find_user_by_uid
+      User.find_by(omniauth_params.slice(:provider, :uid).to_h)
+    end
+
+    def find_and_set_user_by_email
+      user = User.find_by(email: omniauth_params['info']['email'])
+      return unless user
+      user.update(
+        uid: omniauth_params['uid'],
+        provider: omniauth_params['provider']
+      )
+      user
     end
   end
 end
