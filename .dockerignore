@@ -1,5 +1,16 @@
-# Changes to these entities will not cause Docker containers.
-coverage/*
-log/*
-tmp/*
-.git
+# Ignore everything, so we can specify which files should be included
+*
+
+# Only these paths will be included in the docker image
+!app
+!bin
+!config
+!db
+!lib
+!public
+public/assets
+!spec
+!Gemfile
+!Gemfile.lock
+!config.ru
+!Rakefile

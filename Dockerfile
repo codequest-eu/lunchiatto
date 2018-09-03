@@ -1,15 +1,16 @@
-FROM kruszczynski/lunchiatto_base:0.0
-
-COPY Gemfile* ${APP_HOME}/
+FROM lunchiatto/base:0.0 as gems
+ADD Gemfile Gemfile.lock ${APP_HOME}/
 RUN bundle install
 
-# copy code
-ADD . $APP_HOME
+FROM lunchiatto/base:0.0 as assets
+COPY --from=gems /usr/local/bundle /usr/local/bundle
+ADD . ${APP_HOME}
+RUN SECRET_KEY_BASE=for_precompilation \
+    AIRBRAKE_PROJECT_KEY=DUMMYKEY \
+    AIRBRAKE_PROJECT_ID=12345 \
+    rake assets:precompile
 
-# this is needed for precompilation to succeed
-ENV SECRET_KEY_BASE=for_precompilation
-ENV AIRBRAKE_PROJECT_KEY=DUMMYKEY
-ENV AIRBRAKE_PROJECT_ID=12345
-
-# precompile assets
-RUN rake assets:precompile
+from lunchiatto/base:0.0
+ADD . ${APP_HOME}
+COPY --from=gems /usr/local/bundle /usr/local/bundle
+COPY --from=assets ${APP_HOME}/public/assets ${APP_HOME}/public/assets
