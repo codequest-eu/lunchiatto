@@ -8,15 +8,15 @@ default: &default
 
 development:
   <<: *default
-  database: codequestmanager_development
+  database: lunchiatto_development
 
 test:
   <<: *default
-  database: codequestmanager_test
+  database: lunchiatto_test
 
 production:
   <<: *default
-  database: codequestmanager_production
+  database: <%= ENV['DB_NAME'] %>
   host: <%= ENV['DB_HOST'] %>
   port: <%= ENV['DB_PORT'] %>
   username: <%= ENV['DB_USER'] %>
