@@ -20,7 +20,7 @@ gem 'devise'
 gem 'factory_girl_rails', '~> 4.0'
 
 gem 'omniauth', '1.3.1'
-gem 'omniauth-google-oauth2', '0.4.1'
+gem 'omniauth-google-oauth2', '0.6.0'
 
 gem 'money-rails'
 gem 'pundit'
@@ -69,6 +69,7 @@ group :development, :test do
   gem 'faker', require: false
   gem 'inch'
   gem 'pry'
+  gem 'dotenv-rails'
 end
 
 group :development do
