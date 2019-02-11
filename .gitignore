@@ -38,3 +38,6 @@ Vagrantfile
 
 # Stackfile
 stackfile.yml
+
+# Dir for rancher deployment
+production/

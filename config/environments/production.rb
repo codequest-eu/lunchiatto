@@ -106,5 +106,4 @@ Rails.application.configure do
   }
 end
 
-Rails.application.routes.default_url_options[:host] =
-  'https://www.lunchiatto.com'
+Rails.application.routes.default_url_options[:host] = ENV['HOST']
