@@ -12,16 +12,21 @@ class Balance
 
   # returns the total account balance for user
   def total
-    Money.new(payments_as_payer.sum(:balance_cents) -
-      payments_as_beneficiary.sum(:balance_cents), 'PLN')
+    Money.new(
+      payments_as_payer.sum(:balance_cents) -
+      payments_as_beneficiary.sum(:balance_cents) +
+      transfers_as_payer.sum(:amount_cents),
+      'PLN'
+    )
   end
 
   # returns the current balance between user and other
   def balance_for(other_user)
     Money.new(
       payments_as_payer.where(user: other_user).sum(:balance_cents) -
-          payments_as_beneficiary.where(payer: other_user).sum(:balance_cents),
-      'PLN',
+      payments_as_beneficiary.where(payer: other_user).sum(:balance_cents) +
+      transfers_as_payer.where(to_id: other_user.id).sum(:amount_cents),
+      'PLN'
     )
   end
 
@@ -55,5 +60,9 @@ class Balance
 
   def payments_as_payer
     @payments_as_payer ||= Payment.newest_first.where(payer: user)
+  end
+
+  def transfers_as_payer
+    @transfers_as_payer ||= Transfer.where(from_id: user.id, status: :pending)
   end
 end
