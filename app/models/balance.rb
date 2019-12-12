@@ -10,14 +10,9 @@ class Balance
     @user = user
   end
 
-  # returns the total account balance for user
-  def total
-    Money.new(
-      payments_as_payer.sum(:balance_cents) -
-      payments_as_beneficiary.sum(:balance_cents) +
-      transfers_as_payer.sum(:amount_cents),
-      'PLN'
-    )
+  # returns the total account debt for user
+  def total_debt
+    Money.new(creditors.sum { |user| balance_for(user) }, 'PLN')
   end
 
   # returns the current balance between user and other
@@ -64,5 +59,12 @@ class Balance
 
   def transfers_as_payer
     @transfers_as_payer ||= Transfer.where(from_id: user.id, status: :pending)
+  end
+
+  def creditors
+    payments_as_beneficiary
+      .map(&:payer)
+      .uniq
+      .select { |user| balance_for(user) < 0 }
   end
 end

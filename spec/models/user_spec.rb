@@ -82,10 +82,10 @@ RSpec.describe User, type: :model do
     end
   end
 
-  describe '#total_balance' do
+  describe '#total_debt' do
     it 'returns proper balance' do
       money = Money.new(-1700, 'PLN')
-      expect(user.total_balance).to eq(money)
+      expect(user.total_debt).to eq(money)
     end
   end
 

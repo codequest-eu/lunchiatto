@@ -138,9 +138,9 @@ RSpec.describe Order, type: :model do
     it 'directs debt towards payer' do
       subject.subtract_price
       # dishes are 13.30 each + 10.00 in shipping
-      expect(user.total_balance).to eq(Money.new(4660, 'PLN'))
-      expect(user_1.total_balance).to eq(Money.new(-2330, 'PLN'))
-      expect(user_2.total_balance).to eq(Money.new(-2330, 'PLN'))
+      expect(user.total_debt).to eq(Money.new(0, 'PLN'))
+      expect(user_1.total_debt).to eq(Money.new(-2330, 'PLN'))
+      expect(user_2.total_debt).to eq(Money.new(-2330, 'PLN'))
     end
   end # describe '#subtract_price'
 
