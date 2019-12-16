@@ -31,6 +31,8 @@ class User < ActiveRecord::Base
          :omniauthable,
          omniauth_providers: [:google_oauth2]
 
+  delegate :total_debt, to: :balance
+
   def balances
     balance = Balance.new(self)
     company
@@ -57,11 +59,7 @@ class User < ActiveRecord::Base
   def payer_balance(payer)
     balance.balance_for(payer)
   end
-
-  def total_debt
-    balance.total_debt
-  end
-
+  
   def debt_to(user)
     balance.balance_for(user)
   end
