@@ -55,9 +55,9 @@ class BalanceMigration
   # this method reeks of :reek:DuplicateMethodCall, :reek:TooManyStatements
   def success?
     User.find_each do |user|
-      old_b = old_total_debt(user)
-      new_b = new_total_debt(user)
-      if new_b != old_b
+      old_d = old_total_debt(user)
+      new_d = new_total_debt(user)
+      if new_d != old_d
         puts "User #{user.email} has inconsistent balance information!\n
               UserBalance total: #{old_total_debt(user)}\n
               Payment total:     #{new_total_debt(user)}"
