@@ -18,6 +18,9 @@ RSpec/NamedSubject:
 RSpec/AnyInstance:
   Enabled: false
 
+Style/TrailingCommaInArguments:
+  Enabled: false
+
 # Common configuration.
 AllCops:
   # Include common Ruby source files.
@@ -950,16 +953,16 @@ Style/TrailingBlankLines:
     - final_newline
     - final_blank_line
 
-Style/TrailingCommaInArguments:
-  # If `comma`, the cop requires a comma after the last argument, but only for
-  # parenthesized method calls where each argument is on its own line.
-  # If `consistent_comma`, the cop requires a comma after the last argument,
-  # for all parenthesized method calls with arguments.
-  EnforcedStyleForMultiline: comma
-  SupportedStyles:
-    - comma
-    - consistent_comma
-    - no_comma
+# Style/TrailingCommaInArguments:
+#   # If `comma`, the cop requires a comma after the last argument, but only for
+#   # parenthesized method calls where each argument is on its own line.
+#   # If `consistent_comma`, the cop requires a comma after the last argument,
+#   # for all parenthesized method calls with arguments.
+#   EnforcedStyleForMultiline: comma
+#   SupportedStyles:
+#     - comma
+#     - consistent_comma
+#     - no_comma
 
 Style/TrailingCommaInLiteral:
   # If `comma`, the cop requires a comma after the last item in an array or

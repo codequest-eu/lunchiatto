@@ -59,7 +59,7 @@ class User < ActiveRecord::Base
   def payer_balance(payer)
     balance.balance_for(payer)
   end
-  
+
   def debt_to(user)
     balance.balance_for(user)
   end
