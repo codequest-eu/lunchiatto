@@ -39,53 +39,11 @@ class Balance
       created_at,
     )
   end
+  # rubocop:enable Metrics/MethodLength
 
   private
 
   attr_reader :user
-
-  # rubocop:disable Metrics/AbcSize
-  def payment_debts
-    Payment
-      .where(
-        "(user_id = #{user.id} OR payer_id = #{user.id}) " \
-        "AND user_id != payer_id"
-      )
-      .group(
-        "CASE WHEN user_id = #{user.id} THEN payer_id " \
-        "WHEN payer_id = #{user.id} THEN user_id END"
-      )
-      .having(
-        "SUM(CASE WHEN user_id = #{user.id} THEN -balance_cents " \
-        "WHEN payer_id = #{user.id} THEN balance_cents END) < 0"
-      )
-      .pluck(
-        "CASE WHEN user_id = #{user.id} THEN payer_id " \
-        "WHEN payer_id = #{user.id} THEN user_id END, " \
-        "SUM(CASE WHEN user_id = #{user.id} THEN -balance_cents " \
-        "WHEN payer_id = #{user.id} THEN balance_cents END)"
-      ).to_h
-  end
-
-  def payment_balances
-    Payment
-      .where(
-        "(user_id = #{user.id} OR payer_id = #{user.id}) " \
-        "AND user_id != payer_id"
-      )
-      .group(
-        "CASE WHEN user_id = #{user.id} THEN payer_id " \
-        "WHEN payer_id = #{user.id} THEN user_id END"
-      )
-      .pluck(
-        "CASE WHEN user_id = #{user.id} THEN payer_id " \
-        "WHEN payer_id = #{user.id} THEN user_id END, " \
-        "SUM(CASE WHEN user_id = #{user.id} THEN -balance_cents " \
-        "WHEN payer_id = #{user.id} THEN balance_cents END)"
-      )
-      .to_h
-  end
-  # rubocop:enable Metrics/AbcSize
 
   def pending_transfers
     @pending_transfers ||=
@@ -98,13 +56,13 @@ class Balance
 
   def all_balances
     @all_balances ||=
-      payment_balances
+      PaymentQuery.new(user).balances
         .merge(pending_transfers) { |_, balance, transfer| balance + transfer }
   end
 
   def all_debts
-    payment_debts
-      .merge(pending_transfers) { |_, balance, transfer| balance + transfer }
+    PaymentQuery.new(user).debts
+      .merge(pending_transfers) { |_, debt, transfer| debt + transfer }
       .select { |_, balance| balance < 0 }
   end
 
