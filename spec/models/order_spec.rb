@@ -75,8 +75,8 @@ RSpec.describe Order, type: :model do
         expect(subject.ordered?).to be_truthy
       end
 
-      it 'does not substract price' do
-        expect(subject).not_to receive(:subtract_price)
+      it 'substracts price' do
+        expect(subject).to receive(:subtract_price)
         subject.change_status(:ordered)
       end
 
@@ -94,14 +94,14 @@ RSpec.describe Order, type: :model do
         expect(subject.delivered?).to be_truthy
       end
 
-      it 'substracts price' do
-        expect(subject).to receive(:subtract_price)
+      it 'does not substract price' do
+        expect(subject).not_to receive(:subtract_price)
         subject.change_status(:delivered)
       end
 
-      it 'changes to in_progress' do
+      it 'does not change to in_progress' do
         subject.change_status(:in_progress)
-        expect(subject.in_progress?).to be_truthy
+        expect(subject.in_progress?).to be_falsey
       end
     end # context 'when ordered'
 

@@ -8,7 +8,6 @@
       dishesSection: '.dishes-section'
       orderButton: '.order-button'
       changeStatus: '.change-status-button'
-      revertStatus: '.revert-status-button'
       deleteOrder: '.destroy-order-button'
       orderTotal: '.title-total'
 
@@ -17,7 +16,6 @@
 
     triggers:
       'click @ui.changeStatus': 'change:status'
-      'click @ui.revertStatus': 'revert:status'
       'click @ui.deleteOrder': 'delete:order'
 
     behaviors:
@@ -42,9 +40,6 @@
 
     onChangeStatus: ->
       @model.changeStatus()
-
-    onRevertStatus: ->
-      @model.revertStatus()
 
     onDeleteOrder: ->
       if confirm(@DELETE_MESSAGE)

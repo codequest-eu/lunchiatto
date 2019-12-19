@@ -16,9 +16,6 @@
     changeStatus: ->
       @_updateStatus(@_nextStatus())
 
-    revertStatus: ->
-      @_updateStatus(@_prevStatus())
-
     total: ->
       (@get('dishes').total()+parseFloat(@get('shipping'))).toFixed(2)
 
@@ -40,8 +37,6 @@
 
     _nextStatus: ->
       @STATUSES[Math.min(2, @_statusInt()+1)]
-    _prevStatus: ->
-      @STATUSES[Math.max(0, @_statusInt()-1)]
 
     _statusInt: ->
       @STATUSES.indexOf(@get('status'))
