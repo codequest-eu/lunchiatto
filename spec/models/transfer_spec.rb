@@ -38,7 +38,7 @@ RSpec.describe Transfer, type: :model do
 
     it 'creates a correct payment' do
       transfer.mark_as_accepted!
-      expect(user.total_balance).to eq(Money.new(1500, 'PLN'))
+      expect(user.total_debt).to eq(Money.new(0, 'PLN'))
     end
   end
 

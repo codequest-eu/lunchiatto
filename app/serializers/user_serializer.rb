@@ -5,13 +5,13 @@ class UserSerializer < ActiveModel::Serializer
              :subtract_from_self,
              :account_balance,
              :account_number,
-             :total_balance,
+             :total_debt,
              :pending_transfers_count,
              :company_admin,
              :company_id
 
-  def total_balance
-    object.total_balance.to_s
+  def total_debt
+    object.total_debt.to_s
   end
 
   def account_balance

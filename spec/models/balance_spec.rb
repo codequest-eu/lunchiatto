@@ -24,13 +24,13 @@ RSpec.describe Balance do
     context 'it is 0 for user_1' do
       subject { described_class.new(user_1) }
 
-      it { expect(subject.total).to eq(0) }
+      it { expect(subject.total_debt).to eq(0) }
     end
 
     context 'it is 1 for user_2' do
       subject { described_class.new(user_2) }
 
-      it { expect(subject.total).to eq(0) }
+      it { expect(subject.total_debt).to eq(0) }
     end
 
     context 'given one transaction' do
@@ -39,13 +39,13 @@ RSpec.describe Balance do
       end
       subject { described_class.new(user_1) }
 
-      it { expect(subject.total).to eq(Money.new(-200, 'PLN')) }
+      it { expect(subject.total_debt).to eq(Money.new(-200, 'PLN')) }
       it { expect(subject.balance_for(user_2)).to eq(Money.new(-200, 'PLN')) }
 
       context 'for other user' do
         subject { described_class.new(user_2) }
 
-        it { expect(subject.total).to eq(Money.new(200, 'PLN')) }
+        it { expect(subject.total_debt).to eq(Money.new(0, 'PLN')) }
         it { expect(subject.balance_for(user_1)).to eq(Money.new(200, 'PLN')) }
       end
     end
@@ -58,13 +58,13 @@ RSpec.describe Balance do
 
       subject { described_class.new(user_1) }
 
-      it { expect(subject.total).to eq(Money.new(-50, 'PLN')) }
+      it { expect(subject.total_debt).to eq(Money.new(-50, 'PLN')) }
       it { expect(subject.balance_for(user_2)).to eq(Money.new(-50, 'PLN')) }
 
       context 'for other user' do
         subject { described_class.new(user_2) }
 
-        it { expect(subject.total).to eq(Money.new(50, 'PLN')) }
+        it { expect(subject.total_debt).to eq(Money.new(0, 'PLN')) }
         it { expect(subject.balance_for(user_1)).to eq(Money.new(50, 'PLN')) }
       end
     end
@@ -80,7 +80,7 @@ RSpec.describe Balance do
       context 'for user_1' do
         subject { described_class.new(user_1) }
 
-        it { expect(subject.total).to eq(Money.new(-250, 'PLN')) }
+        it { expect(subject.total_debt).to eq(Money.new(-250, 'PLN')) }
         it { expect(subject.balance_for(user_2)).to eq(Money.new(-50, 'PLN')) }
         it { expect(subject.balance_for(user_3)).to eq(Money.new(-200, 'PLN')) }
       end
@@ -88,7 +88,7 @@ RSpec.describe Balance do
       context 'for user_2' do
         subject { described_class.new(user_2) }
 
-        it { expect(subject.total).to eq(Money.new(125, 'PLN')) }
+        it { expect(subject.total_debt).to eq(Money.new(0, 'PLN')) }
         it { expect(subject.balance_for(user_1)).to eq(Money.new(50, 'PLN')) }
         it { expect(subject.balance_for(user_3)).to eq(Money.new(75, 'PLN')) }
       end
@@ -96,7 +96,7 @@ RSpec.describe Balance do
       context 'for user_3' do
         subject { described_class.new(user_3) }
 
-        it { expect(subject.total).to eq(Money.new(125, 'PLN')) }
+        it { expect(subject.total_debt).to eq(Money.new(-75, 'PLN')) }
         it { expect(subject.balance_for(user_1)).to eq(Money.new(200, 'PLN')) }
         it { expect(subject.balance_for(user_2)).to eq(Money.new(-75, 'PLN')) }
       end

@@ -10,19 +10,14 @@ class Balance
     @user = user
   end
 
-  # returns the total account balance for user
-  def total
-    Money.new(payments_as_payer.sum(:balance_cents) -
-      payments_as_beneficiary.sum(:balance_cents), 'PLN')
+  # returns the total account debt for user
+  def total_debt
+    Money.new(all_debts.sum { |_, debt| debt }, 'PLN')
   end
 
   # returns the current balance between user and other
   def balance_for(other_user)
-    Money.new(
-      payments_as_payer.where(user: other_user).sum(:balance_cents) -
-          payments_as_beneficiary.where(payer: other_user).sum(:balance_cents),
-      'PLN',
-    )
+    Money.new(all_balances[other_user.id], 'PLN')
   end
 
   # returns a list of all debts and credits for user and other
@@ -44,10 +39,32 @@ class Balance
       created_at,
     )
   end
+  # rubocop:enable Metrics/MethodLength
 
   private
 
   attr_reader :user
+
+  def pending_transfers
+    @pending_transfers ||=
+      Transfer
+        .where(from_id: user.id, status: :pending)
+        .group('to_id')
+        .pluck('to_id, SUM(amount_cents)')
+        .to_h
+  end
+
+  def all_balances
+    @all_balances ||=
+      PaymentQuery.new(user).balances
+        .merge(pending_transfers) { |_, balance, transfer| balance + transfer }
+  end
+
+  def all_debts
+    PaymentQuery.new(user).debts
+      .merge(pending_transfers) { |_, debt, transfer| debt + transfer }
+      .select { |_, balance| balance < 0 }
+  end
 
   def payments_as_beneficiary
     @payments_as_beneficiary ||= Payment.newest_first.where(user: user)

@@ -19,7 +19,7 @@
       account_balance && "#{account_balance} PLN" || 'N/A'
 
     transferLink: ->
-      "/transfers/new?to_id=#{@model.get('payer_id')}\
+      "/transfers/new?to_id=#{@model.get('user_id')}\
         &amount=#{-@model.get('balance')}"
 
     _adequateUser: ->

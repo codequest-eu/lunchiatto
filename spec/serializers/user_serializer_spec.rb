@@ -7,9 +7,9 @@ RSpec.describe UserSerializer do
   let(:serializer) { described_class.new(user, scope: current_user) }
   let(:extended_serializer) { described_class.new(user, with_balance: true) }
 
-  it '#total_balance' do
-    expect(user).to receive(:total_balance) { 12 }
-    expect(serializer.total_balance).to eq('12')
+  it '#total_debt' do
+    expect(user).to receive(:total_debt) { 12 }
+    expect(serializer.total_debt).to eq('12')
   end
 
   it '#account_balance' do
