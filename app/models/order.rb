@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 class Order < ActiveRecord::Base
   belongs_to :user
-  has_many :dishes, dependent: :destroy
+  has_many :dishes, -> { order(:name) }, dependent: :destroy
   belongs_to :company
 
   validates :user, presence: true
