@@ -9,7 +9,8 @@ class DashboardController < ApplicationController
     gon_user
     gon.push(users_for_select: users_for_select,
              notice: flash[:notice],
-             alert: flash[:alert])
+             alert: flash[:alert],
+             max_debt: Dish::MAX_DEBT)
   end
 
   private

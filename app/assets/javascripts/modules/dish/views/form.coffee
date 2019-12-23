@@ -1,8 +1,8 @@
 @Lunchiatto.module 'Dish', (Dish, App, Backbone, Marionette, $, _) ->
   Dish.Form = Marionette.ItemView.extend
-    ERROR_MESSAGE: 'Since your debt is larger than 80 PLN, you cannot order \
-                    any new dishes. Make appropriate transfers before \
-                    continuing.'
+    ERROR_MESSAGE: "Since your debt is larger than #{gon.maxDebt} PLN, you \
+                    cannot order any new dishes. Make appropriate transfers \
+                    before continuing."
 
     template: 'dishes/form'
 
