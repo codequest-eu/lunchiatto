@@ -1,5 +1,9 @@
 @Lunchiatto.module 'Dish', (Dish, App, Backbone, Marionette, $, _) ->
   Dish.Form = Marionette.ItemView.extend
+    ERROR_MESSAGE: 'Since your debt is larger than 80 PLN, you cannot order \
+                    any new dishes. Make appropriate transfers before \
+                    continuing.'
+
     template: 'dishes/form'
 
     ui:
@@ -21,6 +25,11 @@
       ,
         success: (model) ->
           App.router.navigate(model.successPath(), {trigger: true})
+
+        error: (_, data) =>
+          if data.responseText.includes("Debt can't be larger than") &&
+             confirm(@ERROR_MESSAGE)
+              App.router.navigate("/you", {trigger: true})
 
     _htmlTitle: ->
       return 'Edit Dish' if @model.get('id')

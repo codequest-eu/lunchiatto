@@ -16,6 +16,8 @@ class Dish < ActiveRecord::Base
   scope :by_date, -> { order('created_at') }
   scope :by_name, -> { order('name') }
 
+  MAX_DEBT = 80
+
   def copy(new_user)
     dish = Dish.find_by order: order, user: new_user
     dish.delete if dish

@@ -8,6 +8,8 @@ module Api
       dish = order.dishes.build(dish_params)
       authorize dish
       save_record dish
+    rescue Pundit::NotAuthorizedError
+      user_not_authorized
     end
 
     def show
@@ -47,6 +49,11 @@ module Api
 
     def dish_params
       params.permit(:user_id, :name, :price)
+    end
+
+    def user_not_authorized
+      render json: "Debt can't be larger than #{Dish::MAX_DEBT} PLN",
+             status: :unauthorized
     end
   end
 end
