@@ -44,9 +44,9 @@ RSpec.describe DishPolicy do
         policy = described_class.new other_user, dish
         expect(policy.update?).to be_falsey
       end
-      it 'returns true when edited by orderer' do
+      it 'returns false when edited by orderer' do
         policy = described_class.new user, other_dish
-        expect(policy.update?).to be_truthy
+        expect(policy.update?).to be_falsey
       end
     end
     describe 'order delivered' do

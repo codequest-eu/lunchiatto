@@ -61,11 +61,11 @@ RSpec.describe Api::DishesController, type: :controller do
         put_update(dish: dish)
         expect(response).to have_http_status(:unauthorized)
       end
-      it 'allows the orderer to edit once ordered' do
+      it 'doesn not allow the orderer to edit once ordered' do
         order.ordered!
         sign_in user
         put_update(dish: other_dish, name: 'Fame in the game')
-        expect(response).to have_http_status(200)
+        expect(response).to have_http_status(401)
       end
       def put_update(dish:, name: 'Name')
         put :update, order_id: order.id,

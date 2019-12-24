@@ -5,8 +5,7 @@ class DishPolicy < ApplicationPolicy
   end
 
   def update?
-    (order.in_progress? && record_belongs_to_user?) ||
-      (order.ordered? && order_by_current_user?)
+    order.in_progress? && (record_belongs_to_user? || order_by_current_user?)
   end
 
   def show?
