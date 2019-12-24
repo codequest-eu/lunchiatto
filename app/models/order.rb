@@ -35,8 +35,7 @@ class Order < ActiveRecord::Base
   # This method updates status if legal and
   # triggers price substraction of the order
   def change_status(new_status)
-    return if delivered? || !status_change_permitted?(new_status)
-    self.status = new_status
+    self.status = new_status if changes_permitted[status.to_sym] == new_status
     subtract_price if ordered?
   end
 
@@ -53,7 +52,10 @@ class Order < ActiveRecord::Base
 
   private
 
-  def status_change_permitted?(new_status)
-    (Order.statuses[new_status] - Order.statuses[status]) == 1
+  def changes_permitted
+    {
+      in_progress: :ordered,
+      ordered: :delivered
+    }
   end
 end

@@ -21,6 +21,9 @@ RSpec/AnyInstance:
 Style/TrailingCommaInArguments:
   Enabled: false
 
+Style/TrailingCommaInLiteral:
+  Enabled: false
+
 # Common configuration.
 AllCops:
   # Include common Ruby source files.
@@ -51,7 +54,7 @@ AllCops:
   # Cop names are not displayed in offense messages by default. Change behavior
   # by overriding DisplayCopNames, or by giving the -D/--display-cop-names
   # option.
-  DisplayCopNames: false
+  DisplayCopNames: true
   # Style guide URLs are not displayed in offense messages by default. Change
   # behavior by overriding DisplayStyleGuide, or by giving the
   # -S/--display-style-guide option.
@@ -964,16 +967,16 @@ Style/TrailingBlankLines:
 #     - consistent_comma
 #     - no_comma
 
-Style/TrailingCommaInLiteral:
-  # If `comma`, the cop requires a comma after the last item in an array or
-  # hash, but only when each item is on its own line.
-  # If `consistent_comma`, the cop requires a comma after the last item of all
-  # non-empty array and hash literals.
-  EnforcedStyleForMultiline: comma
-  SupportedStyles:
-    - comma
-    - consistent_comma
-    - no_comma
+# Style/TrailingCommaInLiteral:
+#   # If `comma`, the cop requires a comma after the last item in an array or
+#   # hash, but only when each item is on its own line.
+#   # If `consistent_comma`, the cop requires a comma after the last item of all
+#   # non-empty array and hash literals.
+#   EnforcedStyleForMultiline: comma
+#   SupportedStyles:
+#     - comma
+#     - consistent_comma
+#     - no_comma
 
 # TrivialAccessors requires exact name matches and doesn't allow
 # predicated methods by default.
