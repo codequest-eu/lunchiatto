@@ -7,7 +7,6 @@
       formattedBalance: @formattedBalance()
       formattedPendingBalance: @formattedPendingBalance()
       formattedTotalBalance: @formattedTotalBalance()
-      totalBalance: @totalBalance()
       amountClass: @amountClass()
       transferLink: @transferLink(@model.get('balance'))
       transferLinkIncludingPendingBalance: @transferLink(@totalBalance())
