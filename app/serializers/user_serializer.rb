@@ -6,12 +6,22 @@ class UserSerializer < ActiveModel::Serializer
              :account_balance,
              :account_number,
              :total_debt,
+             :pending_debt,
              :pending_transfers_count,
              :company_admin,
-             :company_id
+             :company_id,
+             :pending_orders_count
 
   def total_debt
     object.total_debt.to_s
+  end
+
+  def pending_debt
+    object.pending_debt.to_s
+  end
+
+  def pending_orders_count
+    object.pending_orders_count
   end
 
   def account_balance

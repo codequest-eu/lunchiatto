@@ -9,3 +9,9 @@
       @reduce((memo, balance) ->
         memo + parseFloat(balance.get('balance'))
       , 0).toFixed(2)
+
+    totalIncludingPendingBalance: ->
+      @reduce((memo, balance) ->
+        memo + parseFloat(balance.get('balance')) +
+        parseFloat(balance.get('pending_balance'))
+      , 0).toFixed(2)
