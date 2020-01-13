@@ -1,7 +1,17 @@
 @Lunchiatto.module 'Entities', (Entities, App, Backbone, Marionette, $, _) ->
-  Entities.Balance = Backbone.Model.extend({})
+  Entities.Balance = Backbone.Model.extend
+    createPayment: (amount, payer_id) =>
+      $.ajax
+        type: 'POST'
+        url: '/api/payments'
+        data:
+          balance: amount
+          payer_id: payer_id
+      success: (data) =>
+        @set(data)
 
   Entities.Balances = Backbone.Collection.extend
+    model: Entities.Balance
     url: ->
       '/api/balances'
 

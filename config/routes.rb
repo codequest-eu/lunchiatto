@@ -19,6 +19,8 @@ Rails.application.routes.draw do
 
     resources :balances, only: [:index]
 
+    resources :payments, only: [:create]
+
     resources :orders, except: [:new, :edit] do
       resources :dishes, except: [:new, :edit] do
         post :copy, on: :member
