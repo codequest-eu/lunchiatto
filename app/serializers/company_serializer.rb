@@ -5,6 +5,6 @@ class CompanySerializer < ActiveModel::Serializer
   has_many :invitations
 
   def users
-    object.users.by_name
+    object.users.by_name.active
   end
 end

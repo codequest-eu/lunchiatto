@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160723202032) do
+ActiveRecord::Schema.define(version: 20200114152847) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -105,6 +105,7 @@ ActiveRecord::Schema.define(version: 20160723202032) do
     t.string   "account_number"
     t.integer  "company_id"
     t.boolean  "company_admin",       default: false
+    t.boolean  "active",              default: true
     t.index ["company_id"], name: "index_users_on_company_id", using: :btree
     t.index ["email"], name: "index_users_on_email", unique: true, using: :btree
   end
