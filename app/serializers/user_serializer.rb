@@ -20,10 +20,6 @@ class UserSerializer < ActiveModel::Serializer
     object.pending_debt.to_s
   end
 
-  def pending_orders_count
-    object.pending_orders_count
-  end
-
   def account_balance
     scope.payer_balance(object).to_s
   end

@@ -1,9 +1,5 @@
 @Lunchiatto.module 'Dish', (Dish, App, Backbone, Marionette, $, _) ->
   Dish.Form = Marionette.ItemView.extend
-    ERROR_MESSAGE: (maxDebt) ->
-      "Since your debt is larger than #{maxDebt} PLN, you cannot \
-       order any new dishes. Make appropriate transfers before continuing."
-
     template: 'dishes/form'
 
     ui:
@@ -18,6 +14,10 @@
         types: ['fadeIn']
       Titleable: {}
 
+    setErrorMessage: (maxDebt) ->
+      "Since your debt is larger than #{maxDebt} PLN, you cannot \
+       order any new dishes. Make appropriate transfers before continuing."
+
     onFormSubmit: ->
       @model.save
         name: @ui.nameInput.val()
@@ -28,7 +28,7 @@
 
         error: (_, data) =>
           if data.responseJSON.error.dish &&
-             confirm(@ERROR_MESSAGE(data.responseJSON.error.dish.limit))
+             confirm(@setErrorMessage(data.responseJSON.error.dish.limit))
               App.router.navigate("/you", {trigger: true})
 
     _htmlTitle: ->

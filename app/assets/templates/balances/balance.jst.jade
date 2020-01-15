@@ -4,7 +4,7 @@
     .balance-box__date
       span Last Change:&nbsp;
       = moment(locals.created_at).format('LL')
-      if locals.transferLink && (+locals.balance < 0 || locals.pending_balance < 0)
+      if locals.transferLink && (locals.balance < 0 || locals.pending_balance < 0)
         if locals.pendingOrdersCount > 0
           p
             a(href=locals.transferLink,data-navigate)

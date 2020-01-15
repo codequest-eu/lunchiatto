@@ -33,6 +33,6 @@ class DishPolicy < ApplicationPolicy
   end
 
   def user_debt_permitted?
-    Balance.new(user).total_debt > Money.new(-Dish::MAX_DEBT, 'PLN')
+    Balance.new(user).total_debt.to_f > Dish::MAX_DEBT
   end
 end

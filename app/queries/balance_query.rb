@@ -17,9 +17,8 @@ class BalanceQuery
     @pending_debts ||= Dish
       .joins(:order)
       .where(
-        "orders.status = 1 AND " \
-        "orders.user_id != #{user.id} AND " \
-        "dishes.user_id = #{user.id}"
+        'orders.status = 1 AND orders.user_id != ? AND dishes.user_id = ?',
+        user.id, user.id
       )
       .group('orders.user_id')
       .pluck('orders.user_id, SUM(-price_cents - shipping_cents/dishes_count)')
@@ -30,9 +29,8 @@ class BalanceQuery
     Dish
       .joins(:order)
       .where(
-        "orders.status = 1 AND " \
-        "orders.user_id = #{user.id} AND " \
-        "dishes.user_id != #{user.id}"
+        'orders.status = 1 AND orders.user_id = ? AND dishes.user_id != ?',
+        user.id, user.id
       )
       .group('dishes.user_id')
       .pluck('dishes.user_id, SUM(price_cents + shipping_cents/dishes_count)')

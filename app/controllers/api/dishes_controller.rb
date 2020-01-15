@@ -52,11 +52,9 @@ module Api
     end
 
     def user_not_authorized
-      render json: user_not_authorized_error_message, status: :unauthorized
-    end
-
-    def user_not_authorized_error_message
-      {error: {dish: {message: 'Debt too large', limit: Dish::MAX_DEBT}}}
+      render json:
+        {error: {dish: {message: 'Debt too large', limit: Dish::MAX_DEBT}}},
+        status: :unauthorized
     end
   end
 end
