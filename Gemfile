@@ -33,6 +33,8 @@ gem 'premailer'
 gem 'premailer-rails'
 gem 'tilt-jade'
 
+gem 'slack-notifier'
+
 # error reporting
 gem 'airbrake'
 

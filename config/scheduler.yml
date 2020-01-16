@@ -4,3 +4,7 @@ WeeklyBalanceReminder:
   cron: '0 9 * * 1'
 PendingTransfersWorker:
   cron: '0 9 * * *'
+SlackNotifierWorker:
+  cron: '0 10 * * 1'
+SlackIdImportWorker:
+  cron: '0 9 * * 1'

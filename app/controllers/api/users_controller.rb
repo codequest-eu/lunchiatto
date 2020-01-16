@@ -42,6 +42,7 @@ module Api
                   company_admin: false,
                   admin: false,
                   provider: SecureRandom.urlsafe_base64(10),
+                  slack_id: "not imported"
                   )
     end
   end
