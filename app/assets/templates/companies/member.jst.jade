@@ -4,5 +4,5 @@
       = locals.name
       if locals.company_admin
         span.users-list__admin-text &nbsp;Admin
-      if !locals.company_admin
+      if !locals.current_user
         a.delete-member(href="#")  Delete
