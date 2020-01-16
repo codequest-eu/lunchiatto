@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'active_model_serializers'
-
 module Api
   class PaymentsController < ApplicationController
     before_action :authenticate_user!
