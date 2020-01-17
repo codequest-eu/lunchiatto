@@ -24,6 +24,7 @@ class User < ActiveRecord::Base
 
   scope :by_name, -> { order 'name' }
   scope :admin, -> { where admin: true }
+  scope :active, -> { where active: true }
 
   devise :database_authenticatable,
          :rememberable,

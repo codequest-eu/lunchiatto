@@ -4,6 +4,8 @@
     .balance-box__date
       span Last Change:&nbsp;
       = moment(locals.created_at).format('LL')
+      if locals.balance > 0 && locals.pendingOrdersCount == 0
+        .delete-link Remove debt
       if locals.transferLink && (locals.balance < 0 || locals.pending_balance < 0)
         if locals.pendingOrdersCount > 0
           p

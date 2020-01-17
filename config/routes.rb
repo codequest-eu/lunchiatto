@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   root 'pages#index'
 
   namespace :api do
-    resources :users, except: [:delete, :edit]
+    resources :users, except: [:edit]
     resources :companies, only: [:show, :update]
     resources :invitations, only: [:create, :destroy]
 
@@ -18,6 +18,8 @@ Rails.application.routes.draw do
     end
 
     resources :balances, only: [:index]
+
+    resources :payments, only: [:create]
 
     resources :orders, except: [:new, :edit] do
       resources :dishes, except: [:new, :edit] do
