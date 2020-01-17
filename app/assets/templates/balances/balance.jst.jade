@@ -7,5 +7,7 @@
       if locals.transferLink && +locals.balance < 0
         | &nbsp;
         a(href=locals.transferLink,data-navigate) Send transfer
+      if locals.balance > 0
+        .delete-link Remove debt
   .columns.small-12.medium-4.large-3
     .money-box(class=locals.amountClass)= locals.formattedBalance
