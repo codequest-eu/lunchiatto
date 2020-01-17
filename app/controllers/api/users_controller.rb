@@ -18,6 +18,12 @@ module Api
       update_record user, user_params
     end
 
+    def destroy
+      user = find_user
+      authorize user
+      deactivate_user(user)
+    end
+
     private
 
     def user_params
@@ -26,6 +32,17 @@ module Api
 
     def find_user
       User.find(params[:id])
+    end
+
+    def deactivate_user(user)
+      user.update(active: false,
+                  name: user.name.split.first,
+                  email: SecureRandom.urlsafe_base64(10),
+                  account_number: SecureRandom.urlsafe_base64(10),
+                  company_admin: false,
+                  admin: false,
+                  provider: SecureRandom.urlsafe_base64(10),
+                  )
     end
   end
 end

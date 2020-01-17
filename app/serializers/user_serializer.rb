@@ -8,7 +8,8 @@ class UserSerializer < ActiveModel::Serializer
              :total_debt,
              :pending_transfers_count,
              :company_admin,
-             :company_id
+             :company_id,
+             :current_user
 
   def total_debt
     object.total_debt.to_s
@@ -20,5 +21,9 @@ class UserSerializer < ActiveModel::Serializer
 
   def include_account_balance?
     instance_options[:with_balance]
+  end
+
+  def current_user
+    object.id == scope.id
   end
 end
