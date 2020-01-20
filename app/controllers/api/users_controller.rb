@@ -35,15 +35,16 @@ module Api
     end
 
     def deactivate_user(user)
-      user.update(active: false,
-                  name: user.name.split.first,
-                  email: SecureRandom.urlsafe_base64(10),
-                  account_number: SecureRandom.urlsafe_base64(10),
-                  company_admin: false,
-                  admin: false,
-                  provider: SecureRandom.urlsafe_base64(10),
-                  slack_id: nil
-                  )
+      user.update(
+        active: false,
+        name: user.name.split.first,
+        email: SecureRandom.urlsafe_base64(10),
+        account_number: SecureRandom.urlsafe_base64(10),
+        company_admin: false,
+        admin: false,
+        provider: SecureRandom.urlsafe_base64(10),
+        slack_id: nil
+      )
     end
   end
 end

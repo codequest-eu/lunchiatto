@@ -34,6 +34,8 @@ class User < ActiveRecord::Base
 
   delegate :total_debt, to: :balance
 
+  NOTIFICATION_DEBT = -30
+
   def balances
     balance = Balance.new(self)
     company
