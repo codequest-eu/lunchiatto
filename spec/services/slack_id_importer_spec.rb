@@ -12,7 +12,6 @@ RSpec.describe SlackIdImporter do
   end
 
   it 'updates user slack id' do
-    puts response
     expect(user.slack_id).to eql(nil)
     subject.perform
     expect(user.slack_id).to eql('SLACKUSERID')
