@@ -9,6 +9,7 @@ FactoryGirl.define do
     factory :admin_user do
       company_admin true
     end
+    slack_id nil
   end
 
   factory :other_user, class: User do

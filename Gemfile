@@ -68,10 +68,13 @@ group :development, :test do
   gem 'rubocop'
   gem 'rubocop-rspec'
   gem 'rspec-rails'
+  gem 'rspec-sidekiq'
   gem 'faker', require: false
   gem 'inch'
   gem 'pry'
   gem 'dotenv-rails'
+  gem 'webmock'
+  gem 'capybara'
 end
 
 group :development do
