@@ -71,6 +71,14 @@ class User < ActiveRecord::Base
     received_transfers.pending.size
   end
 
+  def company_users_by_name
+    company&.users_by_name
+  end
+
+  def active_company_users_by_name
+    company_users_by_name&.active
+  end
+
   private
 
   def balance

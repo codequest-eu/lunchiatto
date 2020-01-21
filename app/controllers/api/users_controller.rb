@@ -4,7 +4,7 @@ module Api
     before_action :authenticate_user!
 
     def index
-      users = current_user.company.users_by_name
+      users = current_user.company_users_by_name
       render json: users, with_balance: true
     end
 
