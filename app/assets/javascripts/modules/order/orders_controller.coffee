@@ -11,3 +11,7 @@
     show: (order) ->
       orderView = new App.Order.Show(model: order)
       App.root.content.show(orderView)
+
+    history: (orders) ->
+      ordersHistory = new Order.History(collection: orders)
+      App.root.content.show(ordersHistory)

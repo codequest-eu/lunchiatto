@@ -70,6 +70,7 @@ group :development, :test do
   gem 'inch'
   gem 'pry'
   gem 'dotenv-rails'
+  gem 'meta_request'
 end
 
 group :development do

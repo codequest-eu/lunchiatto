@@ -3,3 +3,4 @@
   .order-box__date= moment(locals.date).format('LL')
   .order-box__status.status-label(class="status-label__#{locals.machineStatus}")
     = locals.humanStatus
+  .order-box__user= locals.user.company_id

@@ -59,6 +59,15 @@ module Api
       render json: orders, shallow: true
     end
 
+    def history
+      orders =
+        current_user.company.orders.joins(:dishes).where(
+          'orders.user_id = ? OR dishes.user_id = ?',
+          current_user.id, current_user.id
+        ).newest_first
+      render json: orders, shallow: true
+    end
+
     private
 
     def order_params

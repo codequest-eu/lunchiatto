@@ -38,6 +38,12 @@ do (App = @Lunchiatto) ->
         success: (orders) ->
           App.Order.Controller.list(orders)
 
+    ordersHistory: ->
+      orders = new App.Entities.OrdersHistory
+      orders.fetch
+        success: (orders) ->
+          App.Order.Controller.history(orders)
+
     yourBalances: ->
       App.Balance.Controller.you()
 

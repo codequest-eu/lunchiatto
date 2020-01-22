@@ -28,6 +28,7 @@ Rails.application.routes.draw do
       end
       collection do
         get :latest
+        get :history
       end
     end
   end
@@ -44,6 +45,7 @@ Rails.application.routes.draw do
     orders/new orders/:order_id/edit
     orders/:order_id/dishes/:dish_id/edit
     orders/:order_id/dishes/new
+    orders/history
     account_numbers
     settings
     transfers

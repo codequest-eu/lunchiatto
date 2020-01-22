@@ -61,3 +61,19 @@
         remove: false
         success: (collection, data) =>
           @trigger('all:fetched' if data.length < App.pageSize)
+
+
+  Entities.OrdersHistory = Backbone.Collection.extend
+    model: Entities.Order
+    url: '/api/orders/history'
+
+    page: 1
+
+    more: ->
+      @page += 1
+      @fetch
+        data:
+          page: @page
+        remove: false
+        success: (collection, data) =>
+          @trigger('all:fetched' if data.length < App.pageSize)
