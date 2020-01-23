@@ -4,8 +4,13 @@
 FactoryGirl.define do
   factory :order do
     date Time.zone.today
-    from 'The best restaurant'
-    user nil
+    from { Faker::Company.name }
+    user
+    company
+
+    trait :with_ordered_status do
+      status :ordered
+    end
 
     factory :past_order do
       sequence :date do |n|

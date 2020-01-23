@@ -32,14 +32,22 @@ class User < ActiveRecord::Base
          :omniauthable,
          omniauth_providers: [:google_oauth2]
 
-  delegate :total_debt, to: :balance
+  delegate :total_debt, :pending_debt, to: :balance
 
   def balances
     balance = Balance.new(self)
     company
       .users
       .map { |usr| balance.build_wrapper(usr) }
-      .reject { |bal| bal.balance == 0 }
+      .reject { |bal| bal.balance == 0 && bal.pending_balance == 0 }
+  end
+
+  def pending_orders_count
+    Order
+      .ordered
+      .joins(:dishes)
+      .where("orders.user_id = #{id} OR dishes.user_id = #{id}")
+      .count
   end
 
   def add_first_balance

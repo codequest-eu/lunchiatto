@@ -3,7 +3,8 @@
 
 FactoryGirl.define do
   factory :dish do
-    name 'delicious dinner'
+    name { Faker::Food.dish }
     price '13.30'
+    order
   end
 end

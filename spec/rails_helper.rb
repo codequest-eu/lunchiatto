@@ -16,6 +16,7 @@ require 'shoulda-callback-matchers'
 require 'money-rails/test_helpers'
 require 'sidekiq/testing'
 require 'simplecov'
+require 'faker'
 
 SimpleCov.start
 # Requires supporting ruby files with custom matchers and macros, etc, in

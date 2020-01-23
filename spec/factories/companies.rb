@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 FactoryGirl.define do
   factory :company do
-    name 'MyString'
+    name { Faker::Company.name }
   end
 
   factory :other_company, class: Company do

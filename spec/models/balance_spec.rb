@@ -101,5 +101,40 @@ RSpec.describe Balance do
         it { expect(subject.balance_for(user_2)).to eq(Money.new(-75, 'PLN')) }
       end
     end
+
+    context 'with pending orders' do
+      let!(:order) { create :order, :with_ordered_status, user: user_2 }
+      let!(:order_2) { create :order, :with_ordered_status, user: user_3 }
+      let!(:order_3) { create :order, user: user_3 }
+      let!(:dish) { create :dish, order: order, user: user_1 }
+
+      it 'returns proper pending_debt' do
+        expect(user_1.pending_debt).to eq(-dish.price)
+        expect(user_2.pending_debt.to_s.to_i).to eq(0)
+        expect(user_3.pending_debt.to_s.to_i).to eq(0)
+      end
+
+      context 'with multiple pending orders' do
+        let!(:dish_2) { create :dish, order: order_2, user: user_1 }
+        let!(:dish_3) { create :dish, order: order_3, user: user_1 }
+        let!(:payment) do
+          create :payment, user: user_2, payer: user_1, balance: dish.price
+        end
+
+        it 'returns proper pending_debt' do
+          expect(user_1.pending_debt).to eq(-dish_2.price)
+        end
+      end
+
+      context 'with paid pending debt' do
+        let!(:payment) do
+          create(:payment, user: user_2, payer: user_1, balance: dish.price)
+        end
+
+        it 'returns null pending debt' do
+          expect(user_1.pending_debt.to_s.to_i).to eq(0)
+        end
+      end
+    end
   end
 end

@@ -1,12 +1,17 @@
 # frozen_string_literal: true
 class BalanceSerializer < ActiveModel::Serializer
   attributes :balance,
+             :pending_balance,
              :created_at,
              :user,
              :user_id
 
   def balance
     object.balance.to_s
+  end
+
+  def pending_balance
+    object.pending_balance.to_s
   end
 
   def user
