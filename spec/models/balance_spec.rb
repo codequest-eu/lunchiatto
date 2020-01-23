@@ -5,7 +5,7 @@ RSpec.describe Balance do
   context 'given two users' do
     let(:user_1) { create(:user) }
     let(:user_2) { create(:other_user) }
-    let(:user_3) { create(:yet_another_user) }
+    let(:user_3) { create(:another_user) }
 
     shared_context 'pays_for' do |payer, user, amt|
       before do

@@ -21,7 +21,7 @@ FactoryGirl.define do
     active true
   end
 
-  factory :yet_another_user, class: User do
+  factory :another_user, class: User do
     sequence(:email) { |n| "kruszczu#{n}@test.net" }
     sequence(:name) { |n| "kruszczu#{n}" }
     password 'password'

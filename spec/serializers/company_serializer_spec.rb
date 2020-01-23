@@ -3,11 +3,11 @@ require 'rails_helper'
 
 RSpec.describe CompanySerializer do
   let(:company) { create(:company) }
+  let!(:first_user) { create(:user, company: company, name: 'Zbigniew') }
+  let!(:second_user) { create(:other_user, company: company, name: 'Antoni') }
+  let!(:third_user) { create(:another_user, company: company, name: 'Nieaktywny') }
 
   context 'users' do
-    let!(:first_user) { create(:user, company: company, name: 'Zbigniew') }
-    let!(:second_user) { create(:other_user, company: company, name: 'Antoni') }
-    let!(:third_user) { create(:yet_another_user, company: company, name: 'Nieaktywny') }
     subject { described_class.new company }
 
     it 'sorts users by name' do

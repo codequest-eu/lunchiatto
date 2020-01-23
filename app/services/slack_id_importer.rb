@@ -4,9 +4,11 @@ class SlackIdImporter
     @user = user
   end
 
+  SLACK_API_URL = 'https://slack.com/api/users.lookupByEmail?email='
+
   def perform
     if @user.slack_id.blank?
-      url = "https://slack.com/api/users.lookupByEmail?email=#{@user.email}&token=#{ENV['SLACK_OAUTH_TOKEN']}"
+      url = "#{SLACK_API_URL}#{@user.email}&token=#{ENV['SLACK_OAUTH_TOKEN']}"
       uri = URI(url)
       response = Net::HTTP.get(uri)
       output = JSON.parse(response)
