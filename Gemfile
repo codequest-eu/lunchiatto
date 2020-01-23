@@ -69,7 +69,7 @@ group :development, :test do
   gem 'rubocop-rspec'
   gem 'rspec-rails'
   gem 'rspec-sidekiq'
-  gem 'faker', require: false
+  gem 'faker', '~> 1.8.0', require: false
   gem 'inch'
   gem 'pry'
   gem 'dotenv-rails'
