@@ -8,9 +8,9 @@ if locals.ordered_by_current_user
 
     .big-order-box-right
       .big-order-box__who Who ordered: 
-        =  locals.who_ordered
+        =  locals.order_owner
       .big-order-box__your-dish Your dish: 
-        =  locals.current_user_dish
+        =  locals.current_user_ordered_dish
       .big-order-box__price Price: 
         =  locals.current_user_dish_price
         |  PLN
@@ -29,9 +29,9 @@ else
 
     .big-order-box-right
       .big-order-box__who Who ordered: 
-        =  locals.who_ordered
+        =  locals.order_owner
       .big-order-box__your-dish Your dish: 
-        =  locals.current_user_dish
+        =  locals.current_user_ordered_dish
       .big-order-box__price Price: 
         =  locals.current_user_dish_price
         |  PLN

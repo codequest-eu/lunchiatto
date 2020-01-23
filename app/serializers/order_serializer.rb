@@ -14,9 +14,9 @@ class OrderSerializer < ActiveModel::Serializer
              :status,
              :total,
              :user_id,
-             :current_user_dish,
-             :who_ordered,
-             :current_user_dish_price
+             :order_owner,
+             :current_user_dish_price,
+             :current_user_ordered_dish
 
   has_many :dishes
   has_one :user
@@ -65,24 +65,18 @@ class OrderSerializer < ActiveModel::Serializer
     object.from_today?
   end
   
-  def who_ordered
+  def order_owner
     object.user.name
   end
 
-  def current_user_dish
-    if current_user_ordered_dish?
-      object.dishes.where('dishes.user_id = ?', current_user.id).first.name
-    else
-      "You didn't order any dish."
-    end
+  def current_user_ordered_dish
+    return "You didn't order any dish." if current_user_dish.blank?
+    current_user_dish.name
   end
   
   def current_user_dish_price
-    if current_user_ordered_dish?
-      object.dishes.where('dishes.user_id = ?', current_user.id).first.price.to_s
-    else
-      "0.00"
-    end
+    return "0.00" if current_user_dish.blank?
+    current_user_dish.price.to_s
   end
 
   private
@@ -91,7 +85,7 @@ class OrderSerializer < ActiveModel::Serializer
     @policy ||= OrderPolicy.new(current_user, object)
   end
   
-  def current_user_ordered_dish?
-    !object.dishes.where('dishes.user_id = ?', current_user.id).empty?
+  def current_user_dish
+    @current_user_dish ||= object.dishes.find_by(user: current_user)
   end
 end
