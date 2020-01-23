@@ -40,7 +40,7 @@ RSpec.describe Api::CompaniesController, type: :controller do
       it 'returns company' do
         show_company
         parsed_response = JSON.parse(response.body)
-        expect(parsed_response['name']).to eq('MyString')
+        expect(parsed_response['name']).to eq(company.name)
       end
     end
 

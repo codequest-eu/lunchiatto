@@ -14,7 +14,7 @@ RSpec.describe InvitationMailer, type: :mailer do
     end
 
     it 'renders the subject' do
-      expect(subject.subject).to eql('Join MyString on Lunchiatto')
+      expect(subject.subject).to eql("Join #{company.name} on Lunchiatto")
     end
 
     it 'renders the receiver email' do

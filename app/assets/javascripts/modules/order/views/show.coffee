@@ -55,6 +55,7 @@
     _showDishes: ->
       dishes = new Order.Dishes
         collection: @model.get('dishes')
+        viewComparator: 'name'
       @dishes.show(dishes)
 
     _hideOrderButton: ->

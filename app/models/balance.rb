@@ -2,12 +2,26 @@
 class Balance
   include ActiveModel::Model
 
-  Wrapper = Struct.new(:user, :balance, :created_at) do
+  Wrapper = Struct.new(:user, :balance, :pending_balance, :created_at) do
     include ActiveModel::Serialization
   end
 
   def initialize(user)
     @user = user
+  end
+
+  def pending_debt
+    Money.new(
+      BalanceQuery.new(user).pending_balances
+        .merge(all_balances) { |_, pending, balance| pending + balance }
+        .select { |_, balance| balance < 0 }
+        .sum { |_, balance| balance },
+      'PLN'
+    )
+  end
+
+  def pending_balance_for(other_user)
+    Money.new(BalanceQuery.new(user).pending_balances[other_user.id], 'PLN')
   end
 
   # returns the total account debt for user
@@ -36,6 +50,7 @@ class Balance
     Wrapper.new(
       other_user,
       balance_for(other_user),
+      pending_balance_for(other_user),
       created_at,
     )
   end

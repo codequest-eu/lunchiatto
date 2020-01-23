@@ -4,8 +4,26 @@
     .balance-box__date
       span Last Change:&nbsp;
       = moment(locals.created_at).format('LL')
-      if locals.transferLink && +locals.balance < 0
-        | &nbsp;
-        a(href=locals.transferLink,data-navigate) Send transfer
+      if locals.balance > 0 && locals.pendingOrdersCount == 0
+        .delete-link Remove debt
+      if locals.transferLink && (locals.balance < 0 || locals.pending_balance < 0)
+        if locals.pendingOrdersCount > 0
+          p
+            a(href=locals.transferLink,data-navigate)
+              |Send transfer for completed orders [#{locals.formattedBalance}]
+          p
+            a(href=locals.transferLinkIncludingPendingBalance,data-navigate)
+              |Send transfer for all orders (including pending)
+              | [#{locals.formattedTotalBalance}]
+        else
+          | &nbsp;
+          a(href=locals.transferLink,data-navigate) Send transfer
   .columns.small-12.medium-4.large-3
-    .money-box(class=locals.amountClass)= locals.formattedBalance
+    .money-box(class=locals.amountClass)
+      =locals.formattedBalance
+        if locals.pendingOrdersCount > 0
+          p
+            |& #{locals.formattedPendingBalance} from pending orders
+          p
+            |total: #{locals.formattedTotalBalance}
+
