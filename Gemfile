@@ -33,6 +33,8 @@ gem 'premailer'
 gem 'premailer-rails'
 gem 'tilt-jade'
 
+gem 'slack-notifier'
+
 # error reporting
 gem 'airbrake'
 
@@ -66,10 +68,13 @@ group :development, :test do
   gem 'rubocop'
   gem 'rubocop-rspec'
   gem 'rspec-rails'
+  gem 'rspec-sidekiq'
   gem 'faker', '~> 1.8.0', require: false
   gem 'inch'
   gem 'pry'
   gem 'dotenv-rails'
+  gem 'webmock'
+  gem 'capybara'
 end
 
 group :development do

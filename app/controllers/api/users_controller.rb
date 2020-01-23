@@ -4,7 +4,7 @@ module Api
     before_action :authenticate_user!
 
     def index
-      users = current_user.company.users_by_name
+      users = current_user.company_users_by_name
       render json: users, with_balance: true
     end
 
@@ -35,14 +35,16 @@ module Api
     end
 
     def deactivate_user(user)
-      user.update(active: false,
-                  name: user.name.split.first,
-                  email: SecureRandom.urlsafe_base64(10),
-                  account_number: SecureRandom.urlsafe_base64(10),
-                  company_admin: false,
-                  admin: false,
-                  provider: SecureRandom.urlsafe_base64(10),
-                  )
+      user.update(
+        active: false,
+        name: user.name.split.first,
+        email: SecureRandom.urlsafe_base64(10),
+        account_number: SecureRandom.urlsafe_base64(10),
+        company_admin: false,
+        admin: false,
+        provider: SecureRandom.urlsafe_base64(10),
+        slack_id: nil
+      )
     end
   end
 end
