@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 class Dish < ActiveRecord::Base
-  belongs_to :user
+  has_many :user_dishes
+  has_many :users, through: :user_dishes
+  
   belongs_to :order, counter_cache: true
-
+  
   validates :name, presence: true,
                    length: {maximum: 255}
   validates :user, presence: true,

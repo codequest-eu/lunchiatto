@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 class User < ActiveRecord::Base
   has_many :orders
+  has_many :user_dishes
+  has_many :dishes, through: :user_dishes
 
   # TODO(anyone): remove user_balances and balances_as_payer
   has_many :user_balances, dependent: :destroy
