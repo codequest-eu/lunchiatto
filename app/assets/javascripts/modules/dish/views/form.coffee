@@ -3,6 +3,7 @@
     template: 'dishes/form'
 
     ui:
+      userSelect: '.user-id'
       priceInput: '.price'
       nameInput: '.name'
 
@@ -13,6 +14,7 @@
       Animateable:
         types: ['fadeIn']
       Titleable: {}
+      Selectable: {}
 
     setErrorMessage: (maxDebt) ->
       "Since your debt is larger than #{maxDebt} PLN, you cannot \

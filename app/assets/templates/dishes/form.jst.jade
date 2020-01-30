@@ -4,6 +4,7 @@
       h1 Edit Your Dish
     else
       h1 New Dish For Today
+- var selected = locals.user_id ? locals.user_id : ''
 form
   .row
     .columns
@@ -18,6 +19,14 @@ form
     .columns
       label.price-label Dish Price
         input.price(type='text',name='price',autocomplete='off',value=locals.price)
+        small.error.hide
+  .row
+    .columns
+      label.user-label Sharers
+        select.chosen-select.user-id(name='user_id').a(multiple)
+          option(value='') Select Sharers
+          each user in gon.usersForSelect
+            option(value=user.id)=user.name
         small.error.hide
   .row
     .columns
