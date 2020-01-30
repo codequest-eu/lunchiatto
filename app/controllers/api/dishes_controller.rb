@@ -48,13 +48,27 @@ module Api
     end
 
     def dish_params
-      params.permit(:user_id, :name, :price)
+      params.permit(:name, :price)
+    end
+    
+    def user_dish_params
+      params.permit(:user_id, :dish_id)
     end
 
     def user_not_authorized
       render json: {error: {dish: {message: 'Debt too large',
                                    limit: Dish::MAX_DEBT}}},
              status: :unauthorized
+    end
+    
+    def save_record(model)
+      if model.save!
+        UserDish.create!(dish: model, user: current_user, dish_owner: true)
+        yield(model) if block_given?
+        render json: model
+      else
+        render json: {errors: model.errors}, status: :unprocessable_entity
+      end
     end
   end
 end

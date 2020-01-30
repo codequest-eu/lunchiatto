@@ -51,7 +51,11 @@ class OrderSerializer < ActiveModel::Serializer
   end
 
   def current_user_ordered
-    object.dishes.find_by(user: current_user).present?
+    object
+      .dishes
+      .joins(:user_dishes)
+      .where('user_dishes.user_id = ?', current_user)
+      .present?
   end
 
   def ordered_by_current_user

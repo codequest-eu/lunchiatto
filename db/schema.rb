@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200128111859) do
+ActiveRecord::Schema.define(version: 20200129145837) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -88,6 +88,7 @@ ActiveRecord::Schema.define(version: 20200128111859) do
   create_table "user_dishes", force: :cascade do |t|
     t.integer "user_id"
     t.integer "dish_id"
+    t.boolean "dish_owner", default: false
     t.index ["dish_id"], name: "index_user_dishes_on_dish_id", using: :btree
     t.index ["user_id"], name: "index_user_dishes_on_user_id", using: :btree
   end

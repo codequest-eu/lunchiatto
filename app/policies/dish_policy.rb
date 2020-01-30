@@ -35,4 +35,8 @@ class DishPolicy < ApplicationPolicy
   def user_debt_permitted?
     Balance.new(user).total_debt.to_f > Dish::MAX_DEBT
   end
+  
+  def record_belongs_to_user?
+    record.users.include?(user)
+  end
 end

@@ -47,11 +47,7 @@ class User < ActiveRecord::Base
   end
 
   def pending_orders_count
-    Order
-      .ordered
-      .joins(:dishes)
-      .where("orders.user_id = #{id} OR dishes.user_id = #{id}")
-      .count
+    pending_user_orders_count + pending_user_dishes_count
   end
 
   def add_first_balance
@@ -93,5 +89,23 @@ class User < ActiveRecord::Base
 
   def balance
     @balance ||= Balance.new(self)
+  end
+
+  def pending_user_dishes_count
+    Dish
+      .joins(:order, :user_dishes)
+      .where(
+        'orders.status = 1 AND orders.user_id != ? AND user_dishes.user_id = ?',
+        id, id
+      )
+      .count
+  end
+
+  def pending_user_orders_count
+    Order
+      .ordered
+      .joins(:dishes)
+      .where('orders.user_id = ?', id)
+      .count
   end
 end

@@ -9,7 +9,6 @@ class DishSerializer < ActiveModel::Serializer
              :name,
              :order_id,
              :price,
-             :user_id,
              :user_name
 
   def price
@@ -17,7 +16,13 @@ class DishSerializer < ActiveModel::Serializer
   end
 
   def user_name
-    object.user.name
+    if object.users.count > 1
+      object.users.map do |user|
+        user.name
+      end
+    else
+      object.users.first.name
+    end
   end
 
   def editable
@@ -37,7 +42,7 @@ class DishSerializer < ActiveModel::Serializer
   end
 
   def belongs_to_current_user
-    object.user == current_user
+    object.users.include?(current_user)
   end
 
   private

@@ -2,14 +2,14 @@
 class Dish < ActiveRecord::Base
   has_many :user_dishes
   has_many :users, through: :user_dishes
-  
+
   belongs_to :order, counter_cache: true
-  
+
   validates :name, presence: true,
                    length: {maximum: 255}
-  validates :user, presence: true,
-                   uniqueness: {scope: :order_id,
-                                message: 'can only order one dish'}
+  # validates :user, presence: true,
+  #                  uniqueness: {scope: :order_id,
+  #                               message: 'can only order one dish'}
   validates :order, :price_cents, presence: true
 
   register_currency :pln
