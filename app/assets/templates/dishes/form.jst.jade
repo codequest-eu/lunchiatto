@@ -4,7 +4,6 @@
       h1 Edit Your Dish
     else
       h1 New Dish For Today
-- var selected = locals.user_id ? locals.user_id : ''
 form
   .row
     .columns
@@ -23,10 +22,11 @@ form
   .row
     .columns
       label.user-label Sharers
-        select.chosen-select.user-id(name='user_id').a(multiple)
+        select.chosen-select(name='user_ids').a(multiple)
           option(value='') Select Sharers
           each user in gon.usersForSelect
-            option(value=user.id)=user.name
+            if !user.current_user
+              option(value=user.id)=user.name
         small.error.hide
   .row
     .columns

@@ -3,7 +3,7 @@
     template: 'dishes/form'
 
     ui:
-      userSelect: '.user-id'
+      usersSelect: '.user-ids'
       priceInput: '.price'
       nameInput: '.name'
 
@@ -22,10 +22,12 @@
 
     onFormSubmit: ->
       @model.save
+        user_ids: @ui.usersSelect.val()
         name: @ui.nameInput.val()
         price: @ui.priceInput.val().replace(',', '.')
       ,
         success: (model) ->
+          
           App.router.navigate(model.successPath(), {trigger: true})
 
         error: (_, data) =>

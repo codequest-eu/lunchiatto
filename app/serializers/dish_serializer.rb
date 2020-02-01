@@ -9,21 +9,16 @@ class DishSerializer < ActiveModel::Serializer
              :name,
              :order_id,
              :price,
-             :user_name
+             :user_name,
+             :user_ids
 
   def price
     object.price.to_s
   end
 
   def user_name
-    if object.users.count > 1
-      object.users.map do |user|
-        user.name
-      end
-    else
-      object.users.first.name
-    end
-  end
+     object.users.map(&:name).join(', ')
+   end
 
   def editable
     policy.update?
@@ -43,6 +38,10 @@ class DishSerializer < ActiveModel::Serializer
 
   def belongs_to_current_user
     object.users.include?(current_user)
+  end
+  
+  def user_ids
+    object.users.map(&:id)
   end
 
   private
