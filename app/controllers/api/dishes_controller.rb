@@ -62,11 +62,9 @@ module Api
     end
     
     def save_record(model)
-      puts 'XD', params.to_h
-      if model.save!
+      if model.save
         UserDish.create!(dish: model, user: current_user, dish_owner: true)
-        model.user_ids.delete(current_user.id)
-        model.user_ids.each do |user_id|
+        params[:user_ids].each do |user_id|
           UserDish.create!(dish: model, user_id: user_id)
         end
         yield(model) if block_given?

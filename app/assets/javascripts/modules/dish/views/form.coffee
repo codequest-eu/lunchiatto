@@ -9,7 +9,7 @@
 
     behaviors:
       Errorable:
-        fields: ['name', 'price']
+        fields: ['name', 'price', 'user-ids']
       Submittable: {}
       Animateable:
         types: ['fadeIn']
