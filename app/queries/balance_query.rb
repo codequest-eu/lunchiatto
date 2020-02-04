@@ -13,7 +13,7 @@ class BalanceQuery
 
   attr_reader :user
 
-  # TODO fix this
+  # TODO: fix this
   def pending_debts
     @pending_debts ||= Dish
       .joins(:order, :user_dishes)

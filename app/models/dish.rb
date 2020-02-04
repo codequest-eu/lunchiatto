@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 class Dish < ActiveRecord::Base
-  has_many :user_dishes
+  has_many :user_dishes, dependent: :destroy
   has_many :users, through: :user_dishes
 
   belongs_to :order, counter_cache: true
@@ -21,15 +21,12 @@ class Dish < ActiveRecord::Base
 
   MAX_DEBT = -80
 
-  def copy(new_user)
-    dish = Dish.find_by order: order, user: new_user
-    dish.delete if dish
-    new_dish = dup
-    new_dish.user = new_user
-    new_dish
-  end
-
   def subtract(shipping, payer)
-    user.subtract(price + shipping, payer)
+    users.each do |user|
+      user.subtract(price /
+                    user_dishes_count +
+                    shipping /
+                    order.user_appearances_in_order[user.id], payer)
+    end
   end
 end

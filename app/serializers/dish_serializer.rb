@@ -17,8 +17,8 @@ class DishSerializer < ActiveModel::Serializer
   end
 
   def user_name
-     object.users.map(&:name).join(', ')
-   end
+    object.users.map(&:name).join(', ')
+  end
 
   def editable
     policy.update?
@@ -39,7 +39,7 @@ class DishSerializer < ActiveModel::Serializer
   def belongs_to_current_user
     object.users.include?(current_user)
   end
-  
+
   def user_ids
     object.users.map(&:id)
   end

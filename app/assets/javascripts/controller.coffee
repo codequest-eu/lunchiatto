@@ -4,16 +4,20 @@ do (App = @Lunchiatto) ->
       App.Today.Controller.today(orderId)
 
     editDish: (orderId, dishId) ->
-      dish = new App.Entities.Dish(order_id: orderId, id: dishId)
+      dish = new App.Entities.Dish
+        order_id: orderId
+        id: dishId
+        user_id: App.currentUser.id
       dish.fetch
         success: (dish) ->
           App.Dish.Controller.form(dish)
 
     newDish: (orderId) ->
       dish = new App.Entities.Dish
-        order_id: orderId,
-        user_id: App.currentUser.id,
+        order_id: orderId
+        user_id: App.currentUser.id
         price: '0.00'
+        user_ids: ''
       App.Dish.Controller.form(dish)
 
     newOrder: ->
