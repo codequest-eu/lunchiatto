@@ -8,6 +8,6 @@
       if locals.editable
         a.margin-right-small(href="/orders/#{order.get('id')}/dishes/#{id}/edit",data-navigate) Edit
       if locals.deletable
-        a.delete-link(href="#") Delete
+        a.margin-right-small.delete-link(href="#") Delete
       if locals.copyable
         a.copy-link(href="#") Copy
