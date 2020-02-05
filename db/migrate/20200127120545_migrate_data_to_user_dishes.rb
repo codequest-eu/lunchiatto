@@ -1,7 +1,7 @@
 class MigrateDataToUserDishes < ActiveRecord::Migration[5.0]
   def up    
     UserDish.create!([
-      *Dish.all.pluck(:user_id, :id).map { |user_id, id| 
+      *Dish.pluck(:user_id, :id).map { |user_id, id| 
         { 
           user_id: user_id,
           dish_id: id 
@@ -11,7 +11,7 @@ class MigrateDataToUserDishes < ActiveRecord::Migration[5.0]
   end
   
   def down
-    UserDish.all.pluck(:user_id, :dish_id).each do |user_id, dish_id|
+    UserDish.pluck(:user_id, :dish_id).each do |user_id, dish_id|
       Dish.find(dish_id).update!(user_id: user_id)
     end
     UserDish.delete_all
