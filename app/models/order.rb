@@ -43,7 +43,7 @@ class Order < ActiveRecord::Base
   def subtract_price
     return if dishes_count == 0
     dishes.each do |dish|
-      dish.subtract shipping / sum_users, user
+      dish.subtract shipping / ordering_users_count, user
     end
   end
 
@@ -51,19 +51,23 @@ class Order < ActiveRecord::Base
     date.today?
   end
 
-  def sum_users
-    dishes
-      .joins(:user_dishes)
-      .pluck('user_dishes.user_id')
+  def ordering_users_count
+    order_dishes
       .uniq
       .count
   end
 
   def user_appearances_in_order
+    order_dishes
+      .group_by(&:itself)
+      .transform_values(&:count)
+  end
+  
+  private 
+  
+  def order_dishes
     dishes
       .joins(:user_dishes)
       .pluck('user_dishes.user_id')
-      .group_by(&:itself)
-      .transform_values(&:count)
   end
 end

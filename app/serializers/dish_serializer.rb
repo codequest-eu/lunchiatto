@@ -41,7 +41,7 @@ class DishSerializer < ActiveModel::Serializer
   end
 
   def user_ids
-    object.users.map(&:id)
+    object.users.ids
   end
 
   private

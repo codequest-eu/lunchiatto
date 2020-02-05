@@ -7,7 +7,7 @@ module Api
       order = find_order
       dish = order.dishes.build(dish_params)
       authorize dish
-      save_dish dish
+      save_record(dish) { |dish| dish.user_dishes.destroy_all; generate_user_dishes(dish) }
     rescue Pundit::NotAuthorizedError
       user_not_authorized
     end
@@ -21,7 +21,7 @@ module Api
     def update
       dish = find_dish
       authorize dish
-      update_dish dish, dish_params
+      update_record(dish, dish_params) { |dish| dish.user_dishes.destroy_all; generate_user_dishes(dish) }
     end
 
     def destroy
@@ -34,7 +34,10 @@ module Api
       dish = find_dish
       authorize dish
       new_dish = dish.dup
-      copy_dish new_dish
+      save_record(new_dish) { |dish| Dish.reset_counters(dish.id, :user_dishes);
+                                     UserDish.create!(dish: new_dish,
+                                                      user: current_user,
+                                                      dish_owner: true) }
     end
 
     private
@@ -60,44 +63,15 @@ module Api
                                    limit: Dish::MAX_DEBT}}},
              status: :unauthorized
     end
-
-    def save_dish(model)
-      if model.save
-        generate_user_dishes(model)
-        yield(model) if block_given?
-        render json: model
-      else
-        render json: {errors: model.errors}, status: :unprocessable_entity
-      end
-    end
-
-    def update_dish(model, dish_params)
-      if model.update(dish_params)
-        model.user_dishes.destroy_all
-        generate_user_dishes(model)
-        yield(model) if block_given?
-        render json: model
-      else
-        render json: {errors: model.errors}, status: :unprocessable_entity
-      end
-    end
-
-    def copy_dish(model)
-      if model.save
-        Dish.reset_counters(model.id, :user_dishes)
-        UserDish.create!(dish: model, user: current_user, dish_owner: true)
-        yield(model) if block_given?
-        render json: model
-      else
-        render json: {errors: model.errors}, status: :unprocessable_entity
-      end
-    end
     
-    def generate_user_dishes(model)
-      UserDish.create!(dish: model, user: current_user, dish_owner: true)
-      params[:user_ids].each do |user_id|
-        UserDish.create!(dish: model, user_id: user_id)
-      end
+    def generate_user_dishes(dish)    
+      dish.user_dishes.create!([
+        { 
+          user: current_user,
+          dish_owner: true 
+        },
+        *params[:user_ids].map { |user_id| { user_id: user_id } }
+      ])
     end
   end
 end

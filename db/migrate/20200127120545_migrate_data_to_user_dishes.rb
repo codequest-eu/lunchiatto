@@ -1,8 +1,13 @@
 class MigrateDataToUserDishes < ActiveRecord::Migration[5.0]
-  def up  
-    Dish.all.pluck(:user_id, :id).each do |user_id, id|
-      UserDish.create!(user_id: user_id, dish_id: id)
-    end
+  def up    
+    UserDish.create!([
+      *Dish.all.pluck(:user_id, :id).map { |user_id, id| 
+        { 
+          user_id: user_id,
+          dish_id: id 
+        }
+      }
+    ])
   end
   
   def down
