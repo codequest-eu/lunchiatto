@@ -7,10 +7,7 @@ class Dish < ActiveRecord::Base
 
   validates :name, presence: true,
                    length: {maximum: 255}
-  # (todo) this validation need to takes place in user_dishes
-  # validates :user, presence: true,
-  #                  uniqueness: {scope: :order_id,
-  #                               message: 'can only order one dish'}
+                   
   validates :order, :price_cents, presence: true
 
   register_currency :pln

@@ -2,6 +2,7 @@
 module Api
   class DishesController < ApplicationController
     before_action :authenticate_user!
+    before_action :validate_users_debts, only: [:create, :update]
 
     def create
       order = find_order
@@ -21,7 +22,12 @@ module Api
     def update
       dish = find_dish
       authorize dish
-      update_record(dish, dish_params) { |dish| dish.user_dishes.destroy_all; generate_user_dishes(dish) }
+      update_record(dish, dish_params) { |dish| 
+        if current_user.id == dish.user_dishes.find_by(dish_owner: true).user_id 
+          dish.user_dishes.destroy_all; 
+          generate_user_dishes(dish)
+        end
+       }
     end
 
     def destroy
@@ -72,6 +78,14 @@ module Api
         },
         *params[:user_ids].map { |user_id| { user_id: user_id } }
       ])
+    end
+    
+    def validate_users_debts
+      params[:user_ids]&.each do |user_id|
+        if User.find(user_id).total_debt.to_i < Dish::MAX_DEBT
+          user_not_authorized
+        end
+      end
     end
   end
 end

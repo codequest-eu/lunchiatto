@@ -10,7 +10,8 @@ class DishSerializer < ActiveModel::Serializer
              :order_id,
              :price,
              :user_name,
-             :user_ids
+             :user_ids,
+             :order_owner_share
 
   def price
     object.price.to_s
@@ -37,11 +38,15 @@ class DishSerializer < ActiveModel::Serializer
   end
 
   def belongs_to_current_user
-    object.users.include?(current_user)
+    object.users.include?(current_user) && object.user_dishes.find_by(user_id: current_user.id).dish_owner
   end
 
   def user_ids
     object.users.ids
+  end
+  
+  def order_owner_share
+    object.order.user == current_user && belongs_to_current_user
   end
 
   private

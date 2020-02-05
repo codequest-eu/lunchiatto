@@ -24,15 +24,26 @@ form
   .row
     .columns
       label.user-label Sharers
-        select.chosen-select.user-ids(name='user-ids').a(multiple)
-          each user in gon.usersForSelect
-            if user.debt_permitted
-              if user.current_user
-                option(value=user.id, disabled, selected=user.id==selected)=user.name
-              else if locals.user_ids.includes(user.id)
-                option(value=user.id, selected=user.id)=user.name
-              else
-                option(value=user.id)=user.name
+        if locals.user_ids && !locals.order_owner_share && !locals.belongs_to_current_user
+          select.chosen-select.user-ids(name='user-ids', disabled).a(multiple)
+            each user in gon.usersForSelect
+              if user.debt_permitted
+                if user.current_user
+                  option(value=user.id, disabled, selected=user.id==selected)=user.name
+                else if locals.user_ids.includes(user.id)
+                  option(value=user.id, selected=user.id)=user.name
+                else
+                  option(value=user.id)=user.name
+        else
+          select.chosen-select.user-ids(name='user-ids').a(multiple)
+            each user in gon.usersForSelect
+              if user.debt_permitted
+                if user.current_user
+                  option(value=user.id, disabled, selected=user.id==selected)=user.name
+                else if locals.user_ids.includes(user.id)
+                  option(value=user.id, selected=user.id)=user.name
+                else
+                  option(value=user.id)=user.name
         small.error.hide
   .row
     .columns
