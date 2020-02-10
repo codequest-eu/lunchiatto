@@ -7,7 +7,7 @@ class Dish < ActiveRecord::Base
 
   validates :name, presence: true,
                    length: {maximum: 255}
-                   
+
   validates :order, :price_cents, presence: true
 
   register_currency :pln

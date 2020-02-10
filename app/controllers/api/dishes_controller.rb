@@ -8,7 +8,10 @@ module Api
       order = find_order
       dish = order.dishes.build(dish_params)
       authorize dish
-      save_record(dish) { |dish| dish.user_dishes.destroy_all; generate_user_dishes(dish) }
+      save_record(dish) do |this_dish|
+        this_dish.user_dishes.destroy_all
+        generate_user_dishes(this_dish)
+      end
     rescue Pundit::NotAuthorizedError
       user_not_authorized
     end
@@ -22,12 +25,12 @@ module Api
     def update
       dish = find_dish
       authorize dish
-      update_record(dish, dish_params) { |dish| 
-        if current_user.id == dish.user_dishes.find_by(dish_owner: true).user_id 
-          dish.user_dishes.destroy_all; 
-          generate_user_dishes(dish)
+      update_record(dish, dish_params) do |this_dish|
+        if current_user.id == this_dish.user_dishes.find_by(dish_owner: true).user_id
+          this_dish.user_dishes.destroy_all
+          generate_user_dishes(this_dish)
         end
-       }
+      end
     end
 
     def destroy
@@ -40,10 +43,12 @@ module Api
       dish = find_dish
       authorize dish
       new_dish = dish.dup
-      save_record(new_dish) { |dish| Dish.reset_counters(dish.id, :user_dishes);
-                                     UserDish.create!(dish: new_dish,
-                                                      user: current_user,
-                                                      dish_owner: true) }
+      save_record(new_dish) do |this_dish|
+        Dish.reset_counters(this_dish.id, :user_dishes)
+        UserDish.create!(dish: new_dish,
+                         user: current_user,
+                         dish_owner: true)
+      end
     end
 
     private
@@ -69,17 +74,17 @@ module Api
                                    limit: Dish::MAX_DEBT}}},
              status: :unauthorized
     end
-    
-    def generate_user_dishes(dish)    
+
+    def generate_user_dishes(dish)
       dish.user_dishes.create!([
-        { 
+        {
           user: current_user,
-          dish_owner: true 
+          dish_owner: true,
         },
-        *params[:user_ids].map { |user_id| { user_id: user_id } }
+        *params[:user_ids].map { |user_id| {user_id: user_id} },
       ])
     end
-    
+
     def validate_users_debts
       params[:user_ids]&.each do |user_id|
         if User.find(user_id).total_debt.to_i < Dish::MAX_DEBT

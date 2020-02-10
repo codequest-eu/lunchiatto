@@ -33,7 +33,7 @@ class UserSerializer < ActiveModel::Serializer
   def current_user
     object.id == scope.id
   end
-  
+
   def debt_permitted
     object.total_debt.to_f > Dish::MAX_DEBT
   end

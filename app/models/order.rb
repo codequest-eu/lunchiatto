@@ -62,9 +62,9 @@ class Order < ActiveRecord::Base
       .group_by(&:itself)
       .transform_values(&:count)
   end
-  
-  private 
-  
+
+  private
+
   def order_dishes
     dishes
       .joins(:user_dishes)

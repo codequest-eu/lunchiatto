@@ -44,7 +44,7 @@ class DishSerializer < ActiveModel::Serializer
   def user_ids
     object.users.ids
   end
-  
+
   def order_owner_share
     object.order.user == current_user && belongs_to_current_user
   end
