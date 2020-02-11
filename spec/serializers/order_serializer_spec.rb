@@ -49,7 +49,8 @@ RSpec.describe OrderSerializer do
     end
 
     context 'with other user' do
-      let!(:dish) { create(:dish, order: order, user: user) }
+      let!(:dish) { create(:dish, order: order) }
+      let!(:user_dish) { create :user_dish, user: user, dish: dish }
 
       it 'returns true when users do not differ' do
         expect(subject.current_user_ordered).to be_truthy

@@ -124,8 +124,10 @@ RSpec.describe Order, type: :model do
     before { subject.shipping = Money.new(2000, 'PLN') }
     let(:user_1) { create(:user) }
     let(:user_2) { create(:user) }
-    let!(:dish1) { create(:dish, order: subject, user: user_1) }
-    let!(:dish2) { create(:dish, order: subject, user: user_2) }
+    let!(:dish1) { create(:dish, order: subject) }
+    let!(:user_dish1) { create :user_dish, user: user_1, dish: dish1 }
+    let!(:dish2) { create(:dish, order: subject) }
+    let!(:user_dish2) { create :user_dish, user: user_2, dish: dish2 }
 
     it 'creates 2 balances' do
       expect { subject.subtract_price }.to change { UserBalance.count }.by(2)

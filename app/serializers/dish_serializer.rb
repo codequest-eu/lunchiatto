@@ -38,7 +38,7 @@ class DishSerializer < ActiveModel::Serializer
   end
 
   def belongs_to_current_user
-    object.users.include?(current_user) && object.user_dishes.find_by(user_id: current_user.id).dish_owner
+    object.user_dishes.exists?(user_id: current_user.id, dish_owner: true)
   end
 
   def user_ids

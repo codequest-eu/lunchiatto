@@ -5,7 +5,7 @@ class OrderPolicy < ApplicationPolicy
   end
 
   def update?
-    (record.in_progress? || record.ordered?) && record_belongs_to_user?
+    record.in_progress? || record.ordered? && record_belongs_to_user?
   end
 
   def destroy?

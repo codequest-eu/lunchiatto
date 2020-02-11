@@ -13,7 +13,8 @@ class OrderSerializer < ActiveModel::Serializer
              :shipping,
              :status,
              :total,
-             :user_id
+             :user_id,
+             :current_user_debt_permitted
 
   has_many :dishes
   has_one :user
@@ -60,6 +61,10 @@ class OrderSerializer < ActiveModel::Serializer
 
   def ordered_by_current_user
     object.user == current_user
+  end
+
+  def current_user_debt_permitted
+    current_user.total_debt.to_f > Dish::MAX_DEBT
   end
 
   def from_today

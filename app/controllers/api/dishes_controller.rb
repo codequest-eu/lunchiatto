@@ -26,7 +26,8 @@ module Api
       dish = find_dish
       authorize dish
       update_record(dish, dish_params) do |this_dish|
-        if current_user.id == this_dish.user_dishes.find_by(dish_owner: true).user_id
+        if current_user.id == this_dish.user_dishes
+            .find_by(dish_owner: true).user_id
           this_dish.user_dishes.destroy_all
           generate_user_dishes(this_dish)
         end
@@ -75,20 +76,28 @@ module Api
              status: :unauthorized
     end
 
+    def user_unprocessable_entity
+      render json: {error: {dish: {message: 'Debt too large',
+                                   limit: Dish::MAX_DEBT}}},
+             status: :unprocessable_entity
+    end
+
     def generate_user_dishes(dish)
       dish.user_dishes.create!([
-        {
-          user: current_user,
-          dish_owner: true,
-        },
-        *params[:user_ids].map { |user_id| {user_id: user_id} },
-      ])
+                                 {
+                                   user: current_user,
+                                   dish_owner: true,
+                                 },
+                                 *params[:user_ids]&.map do |user_id|
+                                   {user_id: user_id}
+                                 end,
+                               ])
     end
 
     def validate_users_debts
       params[:user_ids]&.each do |user_id|
         if User.find(user_id).total_debt.to_i < Dish::MAX_DEBT
-          user_not_authorized
+          user_unprocessable_entity
         end
       end
     end

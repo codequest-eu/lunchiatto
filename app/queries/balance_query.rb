@@ -37,8 +37,8 @@ class BalanceQuery
 
     UserDish
       .eager_load(dish: :order)
-      .where('orders.status = 1 AND orders.user_id != ?',
-             user.id)
+      .where(orders: {status: 1})
+      .where.not(orders: {user_id: user.id})
       .pluck('orders.id,
         orders.shipping_cents,
         user_dishes.user_id,
@@ -60,12 +60,12 @@ class BalanceQuery
 
   def orders_user_share
     debts = {}
-    orders_shipping_data.each do |key, _value|
-      next unless orders_shipping_data[key][:user_ids].include?(user.id)
+    orders_shipping_data.each do |key, order_data|
+      next unless order_data[:user_ids].include?(user.id)
       debts[key] = {
-        user_ids: orders_shipping_data[key][:user_ids],
-        shipping_cents: orders_shipping_data[key][:shipping_cents],
-        orderer_id: orders_shipping_data[key][:orderer_id],
+        user_ids: order_data[:user_ids],
+        shipping_cents: order_data[:shipping_cents],
+        orderer_id: order_data[:orderer_id],
       }
     end
     debts
@@ -73,17 +73,11 @@ class BalanceQuery
 
   def sum_of_user_shared_orders_shipping
     debts = {}
-    orders_user_share.each do |key, _value|
-      if debts.key?(orders_user_share[key][:orderer_id])
-        debts[orders_user_share[key][:orderer_id]] =
-          debts[orders_user_share[key][:orderer_id]] -
-          orders_user_share[key][:shipping_cents] /
-          orders_user_share[key][:user_ids].count
-      else
-        debts[orders_user_share[key][:orderer_id]] =
-          - (orders_user_share[key][:shipping_cents] /
-            orders_user_share[key][:user_ids].count)
-      end
+    orders_user_share.each do |_, order_data|
+      debts[order_data[:orderer_id]] =
+        debts[order_data[:orderer_id]].to_i -
+        order_data[:shipping_cents] /
+        order_data[:user_ids].count
     end
     debts
   end
@@ -133,19 +127,12 @@ class BalanceQuery
 
   def shipping_by_user
     data = {}
-    credits_shipping_data.each do |key, _value|
-      credits_shipping_data[key][:user_ids].each do |user_id|
-        next if user_id == credits_shipping_data[key][:orderer_id]
-        if data.key?(user_id)
-          data[user_id] =
-            data[user_id] +
-            credits_shipping_data[key][:shipping_cents] /
-            credits_shipping_data[key][:user_ids].count
-        else
-          data[user_id] =
-            credits_shipping_data[key][:shipping_cents] /
-            credits_shipping_data[key][:user_ids].count
-        end
+    credits_shipping_data.each do |_, order_data|
+      order_data[:user_ids].each do |user_id|
+        next if user_id == order_data[:orderer_id]
+        data[user_id] =
+          data[user_id].to_i +
+          order_data[:shipping_cents] / order_data[:user_ids].count
       end
     end
     data

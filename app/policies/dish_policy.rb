@@ -37,6 +37,7 @@ class DishPolicy < ApplicationPolicy
   end
 
   def record_belongs_to_user?
-    record.users.include?(user) && record.user_dishes.find_by(user_id: user.id).dish_owner
+    record.users.include?(user) &&
+      record.user_dishes.find_by(user_id: user.id).dish_owner
   end
 end
