@@ -3,9 +3,10 @@ require 'rails_helper'
 
 RSpec.describe Balance do
   context 'given two users' do
-    let(:user_1) { create(:user) }
-    let(:user_2) { create(:other_user) }
-    let(:user_3) { create(:another_user) }
+    let(:company) { create :company }
+    let(:user_1) { create :user, company: company }
+    let(:user_2) { create :other_user, company: company }
+    let(:user_3) { create :another_user, company: company }
 
     shared_context 'pays_for' do |payer, user, amt|
       before do
@@ -79,7 +80,7 @@ RSpec.describe Balance do
 
       context 'for user_1' do
         subject { described_class.new(user_1) }
-
+        
         it { expect(subject.total_debt).to eq(Money.new(-250, 'PLN')) }
         it { expect(subject.balance_for(user_2)).to eq(Money.new(-50, 'PLN')) }
         it { expect(subject.balance_for(user_3)).to eq(Money.new(-200, 'PLN')) }
