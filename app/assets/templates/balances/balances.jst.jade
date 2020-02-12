@@ -1,6 +1,6 @@
 .row
   .columns.small-12
     h2 #{locals.totalLabel}
-    if locals.pendingOrdersCount > 0
+    if locals.pendingOrdersExist > 0
       h4.margin-bottom #{locals.totalIncludingPendingBalanceLabel}
 .balances-container

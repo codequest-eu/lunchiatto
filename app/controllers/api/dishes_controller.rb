@@ -76,8 +76,8 @@ module Api
              status: :unauthorized
     end
 
-    def user_unprocessable_entity
-      render json: {error: {dish: {message: 'Debt too large',
+    def user_unprocessable_entity(user_ids)
+      render json: {error: {dish: {message: 'Debt too large for some users',
                                    limit: Dish::MAX_DEBT}}},
              status: :unprocessable_entity
     end
@@ -93,13 +93,12 @@ module Api
                                  end,
                                ])
     end
-
+    
     def validate_users_debts
-      params[:user_ids]&.each do |user_id|
-        if User.find(user_id).total_debt.to_i < Dish::MAX_DEBT
-          user_unprocessable_entity
-        end
-      end
+      return if User.where(id: params[:user_ids])
+                    .all? { |user| user.total_debt.to_i < Dish::MAX_DEBT }
+                    
+      user_unprocessable_entity
     end
   end
 end

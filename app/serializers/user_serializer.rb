@@ -10,7 +10,7 @@ class UserSerializer < ActiveModel::Serializer
              :pending_transfers_count,
              :company_admin,
              :company_id,
-             :pending_orders_count,
+             :pending_orders_exist,
              :current_user,
              :debt_permitted
 

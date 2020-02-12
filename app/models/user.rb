@@ -34,7 +34,7 @@ class User < ActiveRecord::Base
          :omniauthable,
          omniauth_providers: [:google_oauth2]
 
-  delegate :total_debt, :pending_debt, to: :balance
+  delegate :total_debt, :pending_debt, :pending_balance_for, to: :balance
 
   NOTIFIER_DEBT = -30
 
@@ -46,8 +46,12 @@ class User < ActiveRecord::Base
       .reject { |bal| bal.balance == 0 && bal.pending_balance == 0 }
   end
 
-  def pending_orders_count
-    pending_user_orders_count + pending_user_dishes_count
+  def pending_orders_exist
+    Order
+      .ordered
+      .joins(dishes: :user_dishes)
+      .where('orders.user_id = ? OR user_dishes.user_id = ?', id, id)
+      .exists?
   end
 
   def add_first_balance
@@ -89,23 +93,5 @@ class User < ActiveRecord::Base
 
   def balance
     @balance ||= Balance.new(self)
-  end
-
-  def pending_user_dishes_count
-    Dish
-      .joins(:order, :user_dishes)
-      .where(
-        'orders.status = 1 AND orders.user_id != ? AND user_dishes.user_id = ?',
-        id, id
-      )
-      .count
-  end
-
-  def pending_user_orders_count
-    Order
-      .ordered
-      .joins(:dishes)
-      .where('orders.user_id = ?', id)
-      .count
   end
 end

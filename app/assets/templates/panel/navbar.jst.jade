@@ -11,7 +11,7 @@ nav.top-bar(role="navigation", data-topbar='', data-options="mobile_show_parent_
       li.balance-label
           a.unhanded(href="/you")
             |#{total_debt} PLN
-            if pending_orders_count > 0
+            if pending_orders_exist
               | &nbsp; (#{pending_debt} PLN including pending orders)
       li
         a(href="/orders/today", data-navigate) Today

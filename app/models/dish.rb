@@ -20,7 +20,6 @@ class Dish < ActiveRecord::Base
 
   def subtract(shipping, payer)
     users.each do |user|
-      # binding.pry
       user.subtract(price /
                     user_dishes_count +
                     shipping /

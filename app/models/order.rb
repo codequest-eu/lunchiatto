@@ -52,20 +52,20 @@ class Order < ActiveRecord::Base
   end
 
   def ordering_users_count
-    order_dishes
+    order_dishes_user_ids
       .uniq
       .count
   end
 
   def user_appearances_in_order
-    order_dishes
+    order_dishes_user_ids
       .group_by(&:itself)
       .transform_values(&:count)
   end
 
   private
 
-  def order_dishes
+  def order_dishes_user_ids
     dishes
       .joins(:user_dishes)
       .pluck('user_dishes.user_id')
