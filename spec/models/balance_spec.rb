@@ -80,7 +80,7 @@ RSpec.describe Balance do
 
       context 'for user_1' do
         subject { described_class.new(user_1) }
-        
+
         it { expect(subject.total_debt).to eq(Money.new(-250, 'PLN')) }
         it { expect(subject.balance_for(user_2)).to eq(Money.new(-50, 'PLN')) }
         it { expect(subject.balance_for(user_3)).to eq(Money.new(-200, 'PLN')) }

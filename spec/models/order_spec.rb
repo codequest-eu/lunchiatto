@@ -121,13 +121,13 @@ RSpec.describe Order, type: :model do
   end # describe '#change_status'
 
   describe '#subtract_price' do
-    before { subject.shipping = Money.new(2000, 'PLN') }
+    before { subject.shipping = Money.new(3000, 'PLN') }
     let(:user_1) { create(:user) }
     let(:user_2) { create(:user) }
-    let!(:dish1) { create(:dish, order: subject) }
-    let!(:user_dish1) { create :user_dish, user: user_1, dish: dish1 }
-    let!(:dish2) { create(:dish, order: subject) }
-    let!(:user_dish2) { create :user_dish, user: user_2, dish: dish2 }
+    let!(:dish_1) { create(:dish, order: subject) }
+    let!(:user_dish_1) { create :user_dish, user: user_1, dish: dish_1 }
+    let!(:dish_2) { create(:dish, order: subject) }
+    let!(:user_dish_2) { create :user_dish, user: user_2, dish: dish_2 }
 
     it 'creates 2 balances' do
       expect { subject.subtract_price }.to change { UserBalance.count }.by(2)
@@ -139,10 +139,40 @@ RSpec.describe Order, type: :model do
 
     it 'directs debt towards payer' do
       subject.subtract_price
-      # dishes are 13.30 each + 10.00 in shipping
+      # dishes are 13.30 each + 15.00 in shipping
       expect(user.total_debt).to eq(Money.new(0, 'PLN'))
-      expect(user_1.total_debt).to eq(Money.new(-2330, 'PLN'))
-      expect(user_2.total_debt).to eq(Money.new(-2330, 'PLN'))
+      expect(user_1.total_debt).to eq(Money.new(-2830, 'PLN'))
+      expect(user_2.total_debt).to eq(Money.new(-2830, 'PLN'))
+    end
+
+    it 'has correct ordering_users_count' do
+      expect(subject.ordering_users_count).to eq(2)
+    end
+
+    context 'when users share dish' do
+      let(:user_3) { create(:user) }
+      let!(:user_dish3) { create :user_dish, user: user_3, dish: dish_2 }
+
+      it 'creates 3 balances' do
+        expect { subject.subtract_price }.to change { UserBalance.count }.by(3)
+      end
+
+      it 'creates 3 payments' do
+        expect { subject.subtract_price }.to change(Payment, :count).by(3)
+      end
+
+      it 'directs debt towards payer' do
+        subject.subtract_price
+        # dishes are 13.30 each + 10.00 in shipping, dish_2 is shared
+        expect(user.total_debt).to eq(Money.new(0, 'PLN'))
+        expect(user_1.total_debt).to eq(Money.new(-2330, 'PLN'))
+        expect(user_2.total_debt).to eq(Money.new(-1665, 'PLN'))
+        expect(user_3.total_debt).to eq(Money.new(-1665, 'PLN'))
+      end
+
+      it 'has correct ordering_users_count' do
+        expect(subject.ordering_users_count).to eq(3)
+      end
     end
   end # describe '#subtract_price'
 

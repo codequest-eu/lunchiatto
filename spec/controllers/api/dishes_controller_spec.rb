@@ -27,10 +27,37 @@ RSpec.describe Api::DishesController, type: :controller do
         post_create(name: nil)
         expect(response).to have_http_status(422)
       end
+      it 'creates user_dishes' do
+        sign_in user
+        expect { post_create }.to change(UserDish, :count).by(1)
+      end
+
+      context '2 users share a dish' do
+        it 'creates 2 user_dishes' do
+          sign_in user
+          post_create_shared
+          expect { post_create_shared }.to change(UserDish, :count).by(2)
+        end
+
+        it 'returns success' do
+          sign_in user
+          post_create_shared
+          expect(response).to have_http_status(:success)
+        end
+      end
 
       def post_create(name: 'Name')
         post :create, order_id: order.id,
                       user_id: user.id,
+                      price_cents: 14,
+                      name: name,
+                      format: :json
+      end
+
+      def post_create_shared(name: 'Name')
+        post :create, order_id: order.id,
+                      user_id: user.id,
+                      user_ids: [other_user.id],
                       price_cents: 14,
                       name: name,
                       format: :json
@@ -135,6 +162,22 @@ RSpec.describe Api::DishesController, type: :controller do
       it 'rejects when not logged in' do
         post_copy
         expect(response).to have_http_status(401)
+      end
+      it 'creates new user_dish' do
+        sign_in user
+        expect { post_copy }.to change(UserDish, :count).by(1)
+      end
+      it 'has correct user_dishes_count' do
+        sign_in user
+        post_copy
+        expect(Dish.last.user_dishes_count).to eq(1)
+      end
+      it 'has correct dish_owner' do
+        sign_in other_user
+        post_copy
+        expect(Dish.last.users.count).to eq(1)
+        expect(Dish.last.users.first).to eq(other_user)
+        expect(Dish.last.user_dishes.first.dish_owner).to eq(true)
       end
 
       def post_copy

@@ -4,6 +4,7 @@ require 'rails_helper'
 RSpec.describe OrderSerializer do
   let(:company) { create :company }
   let(:user) { create :user, company: company }
+  let(:other_user) { create :user, company: company }
   let(:order) { create :order, user: user, company: company }
   let(:current_user) { user }
   subject do
@@ -70,4 +71,23 @@ RSpec.describe OrderSerializer do
       end
     end # context 'with other user'
   end # describe '#ordered_by_current_user?'
+
+  describe '#current_user_debt_permitted' do
+    it 'returns true when user is debt permitted' do
+      expect(subject.current_user_debt_permitted).to be_truthy
+    end
+
+    context 'user is not debt permitted ' do
+      let!(:balance_one) do
+        create :user_balance, user: user, payer: other_user, balance: 100
+      end
+      let!(:payment_one) do
+        create :payment, user: user, payer: other_user, balance: 100
+      end
+
+      it 'returns false when user is not debt permitted' do
+        expect(subject.current_user_debt_permitted).to be_falsey
+      end
+    end
+  end # describe '#current_user_debt_permitted'
 end # RSpec.describe OrderSerializer

@@ -7,6 +7,8 @@ RSpec.describe User, type: :model do
   it { should have_many(:balances_as_payer) }
   it { should have_many(:submitted_transfers) }
   it { should have_many(:received_transfers) }
+  it { should have_many(:user_dishes) }
+  it { should have_many(:dishes) }
   it { should belong_to(:company) }
   it { should callback(:add_first_balance).after(:create) }
 
@@ -107,6 +109,24 @@ RSpec.describe User, type: :model do
     it 'returns debt_to of user_2 and correct payer_balance of payer' do
       expect(user_2.debt_to(payer)).to eq(Money.new(-10_000, 'PLN'))
       expect(payer.payer_balance(user_2)).to eq(Money.new(10_000, 'PLN'))
+    end
+  end
+
+  describe '#pending_orders_exist' do
+    let!(:order) do
+      create :order, :with_ordered_status, user: user
+    end
+    let!(:dish) { create :dish, order: order }
+    let!(:user_dish) { create :user_dish, user: user, dish: dish }
+
+    it "returns 'true' when pending order exist" do
+      expect(user.pending_orders_exist).to eq(true)
+    end
+
+    it "returns 'false' when order changes status to 'delivered'" do
+      order.change_status(2)
+      order.save
+      expect(user.pending_orders_exist).to eq(false)
     end
   end
 

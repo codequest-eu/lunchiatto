@@ -3,6 +3,8 @@ require 'rails_helper'
 
 RSpec.describe Dish, type: :model do
   it { should belong_to(:order) }
+  it { should have_many(:users) }
+  it { should have_many(:user_dishes) }
   it { should validate_presence_of(:price_cents) }
   it { should validate_presence_of(:name) }
   it { should validate_presence_of(:order) }
