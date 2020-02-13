@@ -60,22 +60,18 @@ RSpec.describe BalanceQuery do
 
   describe 'debts' do
     context 'after pending_debts_dishes' do
-      let!(:pending_debts_dishes) do
-        described_class.new(other_user).send(:pending_debts_dishes)
-      end
+      subject { described_class.new(other_user).send(:pending_debts_dishes) }
 
       it 'returns hash of all debt users' do
-        expect(pending_debts_dishes).to eq(user.id => - other_dish.price_cents)
+        expect(subject).to eq(user.id => - other_dish.price_cents)
       end
     end
 
     context 'after orders_shipping_data' do
-      let!(:orders_shipping_data) do
-        described_class.new(other_user).send(:orders_shipping_data)
-      end
+      subject { described_class.new(other_user).send(:orders_shipping_data) }
 
       it 'returns hash of orders data' do
-        expect(orders_shipping_data)
+        expect(subject)
           .to eq(order.id => {user_ids: [user.id, other_user.id],
                               shipping_cents: order.shipping_cents,
                               orderer_id: order.user.id})
@@ -83,40 +79,34 @@ RSpec.describe BalanceQuery do
     end
 
     context 'after orders_user_share' do
-      let!(:orders_user_share) do
-        described_class.new(other_user).send(:orders_user_share)
-      end
+      subject { described_class.new(other_user).send(:orders_user_share) }
 
       it 'returns hash with data of orders that user share' do
-        expect(orders_user_share)
-          .to eq(order.id => {user_ids: [user.id, other_user.id],
-                              shipping_cents: order.shipping_cents,
-                              orderer_id: order.user.id})
+        expect(subject).to eq(order.id => {user_ids: [user.id, other_user.id],
+                                           shipping_cents: order.shipping_cents,
+                                           orderer_id: order.user.id})
       end
     end
 
     context 'after sum_of_user_shared_orders_shipping' do
-      let!(:sum_of_user_shared_orders_shipping) do
+      subject do
         described_class.new(other_user)
           .send(:sum_of_user_shared_orders_shipping)
       end
 
       it 'returns hash with sum of orders shipping data that user share' do
-        expect(sum_of_user_shared_orders_shipping)
-          .to eq(user.id => - order.shipping_cents /
-                                order.ordering_users_count)
+        expect(subject).to eq(user.id => - order.shipping_cents /
+                                            order.ordering_users_count)
       end
     end
 
     context 'after pending_debts' do
-      let!(:pending_debts) do
-        described_class.new(other_user).send(:pending_debts)
-      end
+      subject { described_class.new(other_user).send(:pending_debts) }
 
       it 'returns hash of total pending debts' do
-        expect(pending_debts).to eq(user.id => - other_dish.price_cents -
-                                                order.shipping_cents /
-                                                order.ordering_users_count)
+        expect(subject).to eq(user.id => - other_dish.price_cents -
+                                            order.shipping_cents /
+                                            order.ordering_users_count)
       end
     end
   end
@@ -141,37 +131,29 @@ RSpec.describe BalanceQuery do
     end
 
     context 'after credits_shipping_data' do
-      let!(:credits_shipping_data) do
-        described_class.new(user).send(:credits_shipping_data)
-      end
+      subject { described_class.new(user).send(:credits_shipping_data) }
 
       it 'returns hash of orders data' do
-        expect(credits_shipping_data)
-          .to eq(order.id => {user_ids: [user.id, other_user.id],
-                              shipping_cents: order.shipping_cents,
-                              orderer_id: order.user_id})
+        expect(subject).to eq(order.id => {user_ids: [user.id, other_user.id],
+                                           shipping_cents: order.shipping_cents,
+                                           orderer_id: order.user_id})
       end
     end
 
     context 'after shipping_by_user' do
-      let!(:shipping_by_user) do
-        described_class.new(user).send(:shipping_by_user)
-      end
+      subject { described_class.new(user).send(:shipping_by_user) }
 
       it 'returns hash with sum of shipping cost for every user' do
-        expect(shipping_by_user)
-          .to eq(other_user.id => order.shipping_cents /
-                                  order.ordering_users_count)
+        expect(subject).to eq(other_user.id => order.shipping_cents /
+                                                order.ordering_users_count)
       end
     end
 
     context 'after pending_credits' do
-      let!(:pending_credits) do
-        described_class.new(user).send(:pending_credits)
-      end
+      subject { described_class.new(user).send(:pending_credits) }
 
       it 'returns hash of total pending_credits' do
-        expect(pending_credits).to eq(other_user.id => other_dish.price_cents +
+        expect(subject).to eq(other_user.id => other_dish.price_cents +
                                                 order.shipping_cents /
                                                 order.ordering_users_count)
       end
