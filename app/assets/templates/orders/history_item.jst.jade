@@ -1,0 +1,42 @@
+if locals.ordered_by_current_user
+  .big-order-box-red.animate__fade-in
+    .big-order-box-left
+      .big-order-box__restaurant= locals.from
+      .big-order-box__date= moment(locals.date).format('LL')
+      .big-order-box__status.status-label(class="status-label__#{locals.machineStatus}")
+        = locals.humanStatus
+
+    .big-order-box-right
+      .big-order-box__who Who ordered: 
+        =  locals.order_owner
+      .big-order-box__your-dish Your dishes: 
+        =  locals.current_user_ordered_dishes
+      .big-order-box__price Your dishes cost: 
+        =  locals.current_user_dishes_price
+        |  PLN
+      .big-order-box__shipping Your shipping cost: 
+        =  locals.current_user_shipping_cost
+        |  PLN
+      .big-order-box__dishes Ordering users count: 
+        =  locals.ordering_users_count
+else
+  .big-order-box-blue.animate__fade-in
+    .big-order-box-left
+      .big-order-box__restaurant= locals.from
+      .big-order-box__date= moment(locals.date).format('LL')
+      .big-order-box__status.status-label(class="status-label__#{locals.machineStatus}")
+        = locals.humanStatus
+
+    .big-order-box-right
+      .big-order-box__who Who ordered: 
+        =  locals.order_owner
+      .big-order-box__your-dish Your dishes: 
+        =  locals.current_user_ordered_dishes
+      .big-order-box__price Your dishes cost: 
+        =  locals.current_user_dishes_price
+        |  PLN
+      .big-order-box__shipping Your shipping cost: 
+        =  locals.current_user_shipping_cost
+        |  PLN
+      .big-order-box__dishes Ordering users count: 
+        =  locals.ordering_users_count
