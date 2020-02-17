@@ -44,7 +44,6 @@ AllCops:
   Exclude:
     - 'vendor/**/*'
     - 'db/**/*'
-    - 'app/queries/balance_query.rb'
     - 'Rakefile'
     - 'bin/**/*'
   # Default formatter will be used if no -f/--format option is given.

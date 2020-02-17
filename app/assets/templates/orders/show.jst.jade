@@ -1,3 +1,4 @@
+- var cases = locals.status + " " + locals.ordered_by_current_user + " " + locals.current_user_debt_permitted
 .row
   .columns
     section.full-order
@@ -23,12 +24,16 @@
             a.inline-block.margin-left-small.change-status-button(href="#") Delivered!
         if deletable
           a.inline-block.margin-left-small.destroy-order-button(href="#") Delete
-      if locals.status === 'in_progress' && !locals.current_user_debt_permitted && !locals.ordered_by_current_user
-        span. You can't order new dish becasue your debt is too high!
-      else if locals.status === 'in_progress' && locals.ordered_by_current_user
-        .full-order__buttons.order-button
-          a.button.success(href="/orders/#{id}/dishes/new",data-navigate) Add dish +
-      else if locals.status === 'in_progress' && locals.current_user_debt_permitted && !locals.ordered_by_current_user
-        .full-order__buttons.order-button
-          a.button.success(href="/orders/#{id}/dishes/new",data-navigate) Add dish +
+      case cases
+        when 'in_progress false false'
+          .span You can't order new dish becasue your debt is too high!
+        when 'in_progress true true'
+          .full-order__buttons.order-button
+            a.button.success(href="/orders/#{id}/dishes/new",data-navigate) Add dish +
+        when 'in_progress true false'
+          .full-order__buttons.order-button
+            a.button.success(href="/orders/#{id}/dishes/new",data-navigate) Add dish +
+        when 'in_progress false true'
+          .full-order__buttons.order-button
+            a.button.success(href="/orders/#{id}/dishes/new",data-navigate) Add dish +
 section.dishes-section

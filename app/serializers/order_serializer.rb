@@ -81,8 +81,7 @@ class OrderSerializer < ActiveModel::Serializer
   end
 
   def current_user_ordered_dishes
-    return "You didn't order any dish." if current_user_dishes.blank?
-    current_user_dishes.map(&:name).join(', ')
+    current_user_dishes.map(&:name).join(', ') || "You didn't order any dish."
   end
 
   def current_user_dishes_price
@@ -103,7 +102,7 @@ class OrderSerializer < ActiveModel::Serializer
   end
 
   def current_user_dishes
-    object
+    @current_user_dishes ||= object
       .dishes
       .joins(:user_dishes)
       .where('user_dishes.user_id = ?', current_user)

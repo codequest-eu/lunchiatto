@@ -8,6 +8,7 @@ module Api
       order = find_order
       dish = order.dishes.build(dish_params)
       authorize dish
+      params[:user_ids].sort
       save_record(dish) do |this_dish|
         this_dish.user_dishes.destroy_all
         generate_user_dishes(this_dish)
@@ -26,8 +27,8 @@ module Api
       dish = find_dish
       authorize dish
       update_record(dish, dish_params) do |this_dish|
-        if current_user.id == this_dish.user_dishes
-            .find_by(dish_owner: true).user_id
+        this_user_id = this_dish.user_dishes.find_by(dish_owner: true).user_id
+        if current_user.id == this_user_id
           this_dish.user_dishes.destroy_all
           generate_user_dishes(this_dish)
         end
@@ -83,20 +84,20 @@ module Api
     end
 
     def generate_user_dishes(dish)
-      dish.user_dishes.create!([
-                                 {
-                                   user: current_user,
-                                   dish_owner: true,
-                                 },
-                                 *params[:user_ids]&.map do |user_id|
-                                   {user_id: user_id}
-                                 end,
-                               ])
+      dish.user_dishes.create!(
+        [
+          {user: current_user, dish_owner: true},
+          *params[:user_ids]&.map { |user_id| {user_id: user_id} },
+        ]
+      )
     end
 
     def validate_users_debts
-      return if User.where(id: params[:user_ids])
-          .none? { |user| user.total_debt.to_i < Dish::MAX_DEBT }
+      users =
+        User.where(id: params[:user_ids]).none? do |user|
+          user.total_debt.to_i < Dish::MAX_DEBT
+        end
+      return if users
 
       user_unprocessable_entity
     end

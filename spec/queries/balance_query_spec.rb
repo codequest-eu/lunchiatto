@@ -159,4 +159,221 @@ RSpec.describe BalanceQuery do
       end
     end
   end
+
+  context 'with 2 orders and 3 users' do
+    let!(:order_2) do
+      create :order, :with_ordered_status, user: user,
+                                           company: company,
+                                           shipping: '50.00'
+    end
+    let!(:user_3) { create :user, company: company }
+    let!(:dish_3) { create :dish, order: order_2, price: '30.00' }
+    let!(:user_dish_3) { create :user_dish, dish: dish_3, user: user_3 }
+    let!(:dish_4) { create :dish, order: order_2, price: '50.00' }
+    let!(:user_dish_4) { create :user_dish, dish: dish_4, user: user }
+    let!(:user_dish_5) { create :user_dish, dish: dish_4, user: other_user }
+
+    describe 'debts' do
+      context 'after pending_debts_dishes' do
+        let!(:user_subject) do
+          described_class.new(user).send(:pending_debts_dishes)
+        end
+        let!(:other_user_subject) do
+          described_class.new(other_user).send(:pending_debts_dishes)
+        end
+        let!(:user_3_subject) do
+          described_class.new(user_3).send(:pending_debts_dishes)
+        end
+
+        it 'returns hash with dishes prices of all debt for specific user' do
+          expect(user_subject).to eq({})
+          expect(other_user_subject)
+            .to eq(user.id => - other_dish.price_cents -
+                                dish_4.price_cents /
+                                dish_4.user_dishes_count)
+          expect(user_3_subject).to eq(user.id => - dish_3.price_cents)
+        end
+      end
+
+      context 'after orders_shipping_data' do
+        let!(:user_subject) do
+          described_class.new(user).send(:orders_shipping_data)
+        end
+        let!(:other_user_subject) do
+          described_class.new(other_user).send(:orders_shipping_data)
+        end
+        let!(:user_3_subject) do
+          described_class.new(user_3).send(:orders_shipping_data)
+        end
+        # rubocop:disable RSpec/ExampleLength
+        it 'returns hash of orders data if user is in debt' do
+          expect(user_subject).to eq({})
+          expect(other_user_subject)
+            .to eq(order.id => {user_ids: [user.id, other_user.id],
+                                shipping_cents: order.shipping_cents,
+                                orderer_id: order.user.id},
+                   order_2.id => {user_ids: [user_3.id, other_user.id, user.id],
+                                  shipping_cents: order_2.shipping_cents,
+                                  orderer_id: order_2.user.id})
+          expect(user_3_subject).to eq(other_user_subject)
+        end
+        # rubocop:enable RSpec/ExampleLength
+      end
+
+      context 'after orders_user_share' do
+        let!(:other_user_subject) do
+          described_class.new(other_user).send(:orders_user_share)
+        end
+        let!(:user_3_subject) do
+          described_class.new(user_3).send(:orders_user_share)
+        end
+        # rubocop:disable RSpec/ExampleLength
+        it 'returns hash with filtered data of orders that user share ' do
+          expect(other_user_subject)
+            .to eq(order.id => {user_ids: [user.id, other_user.id],
+                                shipping_cents: order.shipping_cents,
+                                orderer_id: order.user.id},
+                   order_2.id => {user_ids: [user_3.id, other_user.id, user.id],
+                                  shipping_cents: order_2.shipping_cents,
+                                  orderer_id: order_2.user.id})
+          expect(user_3_subject)
+            .to eq(order_2.id => {user_ids: [user_3.id, other_user.id, user.id],
+                                  shipping_cents: order_2.shipping_cents,
+                                  orderer_id: order_2.user.id})
+        end
+        # rubocop:enable RSpec/ExampleLength
+      end
+
+      context 'after sum_of_user_shared_orders_shipping' do
+        let!(:other_user_subject) do
+          described_class.new(other_user)
+            .send(:sum_of_user_shared_orders_shipping)
+        end
+        let!(:user_3_subject) do
+          described_class.new(user_3).send(:sum_of_user_shared_orders_shipping)
+        end
+        # rubocop:disable RSpec/ExampleLength
+        it 'returns hash with sum of orders shipping data of orders that
+          user share' do
+          expect(other_user_subject)
+            .to eq(user.id => - order.shipping_cents /
+                                order.ordering_users_count -
+                                order_2.shipping_cents /
+                                order_2.ordering_users_count)
+          expect(user_3_subject)
+            .to eq(user.id => - (order_2.shipping_cents.to_f /
+                                 order_2.ordering_users_count).to_i)
+        end
+        # rubocop:enable RSpec/ExampleLength
+      end
+
+      context 'after pending_debts' do
+        let!(:other_user_subject) do
+          described_class.new(other_user).send(:pending_debts)
+        end
+        let!(:user_3_subject) do
+          described_class.new(user_3).send(:pending_debts)
+        end
+        # rubocop:disable RSpec/ExampleLength
+        it 'return hash of total pending debt for specific user' do
+          expect(other_user_subject)
+            .to eq(user.id => - other_dish.price_cents -
+                                dish_4.price_cents /
+                                dish_4.user_dishes_count -
+                                order.shipping_cents /
+                                order.ordering_users_count -
+                                order_2.shipping_cents /
+                                order_2.ordering_users_count)
+          expect(user_3_subject)
+            .to eq(user.id => - dish_3.price_cents -
+                                order_2.shipping_cents /
+                                order_2.ordering_users_count)
+        end
+        # rubocop:enable RSpec/ExampleLength
+      end
+    end
+
+    describe 'credits' do
+      context 'after pending_credits_prices' do
+        let!(:other_user_subject) do
+          described_class.new(other_user).send(:pending_credits_prices)
+        end
+        let!(:user_subject) do
+          described_class.new(user).send(:pending_credits_prices)
+        end
+        let!(:user_3_subject) do
+          described_class.new(user_3).send(:pending_credits_prices)
+        end
+
+        it 'return correct hash for specific user' do
+          expect(user_subject).to eq(other_user.id => other_dish.price_cents +
+                                                      dish_4.price_cents /
+                                                      dish_4.user_dishes_count,
+                                     user_3.id => dish_3.price_cents)
+          expect(other_user_subject).to eq({})
+          expect(user_3_subject).to eq({})
+        end
+      end
+
+      context 'after credits_shipping_data' do
+        let!(:other_user_subject) do
+          described_class.new(other_user).send(:credits_shipping_data)
+        end
+        let!(:user_subject) do
+          described_class.new(user).send(:credits_shipping_data)
+        end
+        let!(:user_3_subject) do
+          described_class.new(user_3).send(:credits_shipping_data)
+        end
+        # rubocop:disable RSpec/ExampleLength
+        it 'returns hash of orders which user paid for' do
+          expect(user_subject)
+            .to eq(order.id => {user_ids: [user.id, other_user.id],
+                                shipping_cents: order.shipping_cents,
+                                orderer_id: order.user_id},
+                   order_2.id => {user_ids: [user_3.id, other_user.id, user.id],
+                                  shipping_cents: order_2.shipping_cents,
+                                  orderer_id: order_2.user.id})
+          expect(other_user_subject).to eq({})
+          expect(user_3_subject).to eq({})
+        end
+        # rubocop:enable RSpec/ExampleLength
+      end
+
+      context 'after shipping_by_user' do
+        let!(:user_subject) do
+          described_class.new(user).send(:shipping_by_user)
+        end
+
+        it 'kekw' do
+          expect(user_subject)
+            .to eq(other_user.id => order.shipping_cents /
+                                    order.ordering_users_count +
+                                    order_2.shipping_cents /
+                                    order_2.ordering_users_count,
+                   user_3.id => order_2.shipping_cents /
+                                order_2.ordering_users_count)
+        end
+      end
+
+      context 'after pending_credits' do
+        let!(:user_subject) { described_class.new(user).send(:pending_credits) }
+        # rubocop:disable RSpec/ExampleLength
+        it 'returns hash of total pending credits' do
+          expect(user_subject)
+            .to eq(other_user.id => other_dish.price_cents +
+                                    dish_4.price_cents /
+                                    dish_4.user_dishes_count +
+                                    order.shipping_cents /
+                                    order.ordering_users_count +
+                                    order_2.shipping_cents /
+                                    order_2.ordering_users_count,
+                   user_3.id => dish_3.price_cents +
+                                order_2.shipping_cents /
+                                order_2.ordering_users_count)
+        end
+        # rubocop:enable RSpec/ExampleLength
+      end
+    end
+  end
 end

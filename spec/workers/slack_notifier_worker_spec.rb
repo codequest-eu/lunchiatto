@@ -10,10 +10,9 @@ RSpec.describe SlackNotifierWorker, type: :worker do
   context 'occurs weekly' do
     it 'occurs at expected time' do
       scheduled_job
-      assert_equal true, described_class
-        .jobs
-        .last['jid']
-        .include?(scheduled_job)
+
+      expect(described_class.jobs.last['jid'].include?(scheduled_job))
+        .to eq(true)
       expect(described_class).to have_enqueued_sidekiq_job('Awesome', true)
         .at(time)
     end

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
-
+# rubocop:disable ClassLength
+# rubocop:disable MethodLength
 class BalanceQuery
   def initialize(user)
     @user = user
@@ -72,12 +73,11 @@ class BalanceQuery
   end
 
   def sum_of_user_shared_orders_shipping
-    debts = {}
+    debts = Hash.new 0
     orders_user_share.each do |_, order_data|
-      debts[order_data[:orderer_id]] =
-        debts[order_data[:orderer_id]].to_i -
-        order_data[:shipping_cents] /
-        order_data[:user_ids].count
+      debts[order_data[:orderer_id]] += -
+        (order_data[:shipping_cents].to_f /
+        order_data[:user_ids].count).to_i
     end
     debts
   end
@@ -126,12 +126,11 @@ class BalanceQuery
   end
 
   def shipping_by_user
-    data = {}
+    data = Hash.new 0
     credits_shipping_data.each do |_, order_data|
       order_data[:user_ids].each do |user_id|
         next if user_id == order_data[:orderer_id]
-        data[user_id] =
-          data[user_id].to_i +
+        data[user_id] +=
           order_data[:shipping_cents] / order_data[:user_ids].count
       end
     end
