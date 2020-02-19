@@ -8,7 +8,6 @@ module Api
       order = find_order
       dish = order.dishes.build(dish_params)
       authorize dish
-      params[:user_ids].sort
       save_record(dish) do |this_dish|
         this_dish.user_dishes.destroy_all
         generate_user_dishes(this_dish)
