@@ -1,6 +1,5 @@
 # frozen_string_literal: true
-# rubocop:disable ClassLength
-# rubocop:disable MethodLength
+# rubocop:disable ClassLength, MethodLength
 class BalanceQuery
   def initialize(user)
     @user = user
