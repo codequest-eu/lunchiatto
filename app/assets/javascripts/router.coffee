@@ -4,6 +4,7 @@
     'you(/)': 'yourBalances'
     'others(/)': 'othersBalances'
     'orders(/)': 'ordersIndex'
+    'orders/history(/)': 'ordersHistory'
     'orders/new(/)': 'newOrder'
     'orders/:orderId(/)': 'showOrder'
     'orders/:orderId/edit(/)': 'editOrder'

@@ -1,0 +1,44 @@
+.big-order-box-blue {
+  @include single-transition(all, $animation-duration-medium);
+  padding: 30px;
+  text-align: center;
+  border-left: 10px solid blue;
+  display: flex;
+  text-align: center;
+
+  &:hover {
+    background-color: $snow;
+  }
+}
+
+.big-order-box-red {
+  @include single-transition(all, $animation-duration-medium);
+  padding: 30px;
+  text-align: center;
+  border-left: 10px solid red;
+  display: flex;
+  text-align: center;
+
+  &:hover {
+    background-color: $snow;
+  }
+}
+
+.big-order-box__date {
+  color: $monsoon;
+  font-size: 1.2rem;
+}
+
+.big-order-box__restaurant {
+  font-size: 1.5rem;
+}
+
+.big-order-box-left {
+  display: inline-block;
+  width: 40%;
+}
+
+.big-order-box-right {
+  display: inline-block;
+  width: 60%;
+}

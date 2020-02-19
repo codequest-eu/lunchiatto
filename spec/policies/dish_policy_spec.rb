@@ -6,8 +6,12 @@ RSpec.describe DishPolicy do
   let(:user) { create :user, company: company }
   let(:other_user) { create :other_user, company: company }
   let(:order) { create :order, user: user, company: company }
-  let(:dish) { create :dish, order: order, user: user }
-  let(:other_dish) { create :dish, user: other_user, order: order }
+  let(:dish) { create :dish, order: order }
+  let!(:user_dish) { create :user_dish, user: user, dish: dish }
+  let(:other_dish) { create :dish, order: order }
+  let!(:other_user_dish) do
+    create :user_dish, user: other_user, dish: other_dish
+  end
   subject { described_class.new(user, dish) }
 
   describe '#create?' do
@@ -101,9 +105,9 @@ RSpec.describe DishPolicy do
     let(:other_policy) { described_class.new other_user, dish }
     describe 'order in progress' do
       it 'is true for the user' do
-        expect(subject.copy?).to be_falsey
+        expect(subject.copy?).to be_truthy
       end
-      it 'is false for the other user' do
+      it 'is true for the other user' do
         expect(other_policy.copy?).to be_truthy
       end
     end

@@ -3,16 +3,18 @@
     template: 'dishes/form'
 
     ui:
+      usersSelect: '.user-ids'
       priceInput: '.price'
       nameInput: '.name'
 
     behaviors:
       Errorable:
-        fields: ['name', 'price']
+        fields: ['name', 'price', 'user-ids']
       Submittable: {}
       Animateable:
         types: ['fadeIn']
       Titleable: {}
+      Selectable: {}
 
     setErrorMessage: (maxDebt) ->
       "Since your debt is larger than #{maxDebt} PLN, you cannot \
@@ -20,10 +22,12 @@
 
     onFormSubmit: ->
       @model.save
+        user_ids: @ui.usersSelect.val()
         name: @ui.nameInput.val()
         price: @ui.priceInput.val().replace(',', '.')
       ,
         success: (model) ->
+          
           App.router.navigate(model.successPath(), {trigger: true})
 
         error: (_, data) =>

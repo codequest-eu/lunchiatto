@@ -4,6 +4,8 @@
       h1 Edit Your Dish
     else
       h1 New Dish For Today
+- var selected = locals.user_id ? locals.user_id : ''
+
 form
   .row
     .columns
@@ -18,6 +20,32 @@ form
     .columns
       label.price-label Dish Price
         input.price(type='text',name='price',autocomplete='off',value=locals.price)
+        small.error.hide
+  .row
+    .columns
+      label.user-label Sharers
+        if locals.user_ids && !locals.belongs_to_current_user
+          select.chosen-select.user-ids(name='user-ids', disabled).a(multiple)
+            each user in gon.usersForSelect
+              if user.debt_permitted
+                if user.current_user
+                  option(value=user.id, disabled, selected=user.id==selected)=user.name
+                else if locals.user_ids.includes(user.id)
+                  option(value=user.id, selected=user.id)=user.name
+                else
+                  option(value=user.id)=user.name
+        else
+          select.chosen-select.user-ids(name='user-ids').a(multiple)
+            each user in gon.usersForSelect
+              if user.debt_permitted 
+                if user.current_user
+                  option(value=user.id, disabled, selected=user.id==selected)=user.name
+                else if locals.user_ids.includes(user.id)
+                  option(value=user.id, selected=user.id)=user.name
+                else
+                  option(value=user.id)=user.name
+              if user.current_user && !user.debt_permitted
+                option(value=user.id, disabled, selected=user.id==selected)=user.name
         small.error.hide
   .row
     .columns

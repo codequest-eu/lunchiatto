@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200116123046) do
+ActiveRecord::Schema.define(version: 20200129145837) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -23,13 +23,12 @@ ActiveRecord::Schema.define(version: 20200116123046) do
 
   create_table "dishes", force: :cascade do |t|
     t.string   "name"
-    t.integer  "price_cents", default: 0
-    t.integer  "user_id"
+    t.integer  "price_cents",       default: 0
     t.integer  "order_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "user_dishes_count", default: 0
     t.index ["order_id"], name: "index_dishes_on_order_id", using: :btree
-    t.index ["user_id"], name: "index_dishes_on_user_id", using: :btree
   end
 
   create_table "invitations", force: :cascade do |t|
@@ -84,6 +83,14 @@ ActiveRecord::Schema.define(version: 20200116123046) do
     t.integer  "payer_id"
     t.index ["payer_id"], name: "index_user_balances_on_payer_id", using: :btree
     t.index ["user_id"], name: "index_user_balances_on_user_id", using: :btree
+  end
+
+  create_table "user_dishes", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "dish_id"
+    t.boolean "dish_owner", default: false
+    t.index ["dish_id"], name: "index_user_dishes_on_dish_id", using: :btree
+    t.index ["user_id"], name: "index_user_dishes_on_user_id", using: :btree
   end
 
   create_table "users", force: :cascade do |t|

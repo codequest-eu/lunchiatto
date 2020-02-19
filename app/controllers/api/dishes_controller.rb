@@ -2,12 +2,16 @@
 module Api
   class DishesController < ApplicationController
     before_action :authenticate_user!
+    before_action :validate_users_debts, only: [:create, :update]
 
     def create
       order = find_order
       dish = order.dishes.build(dish_params)
       authorize dish
-      save_record dish
+      save_record(dish) do |this_dish|
+        this_dish.user_dishes.destroy_all
+        generate_user_dishes(this_dish)
+      end
     rescue Pundit::NotAuthorizedError
       user_not_authorized
     end
@@ -21,7 +25,13 @@ module Api
     def update
       dish = find_dish
       authorize dish
-      update_record dish, dish_params
+      update_record(dish, dish_params) do |this_dish|
+        this_user_id = this_dish.user_dishes.find_by(dish_owner: true).user_id
+        if current_user.id == this_user_id
+          this_dish.user_dishes.destroy_all
+          generate_user_dishes(this_dish)
+        end
+      end
     end
 
     def destroy
@@ -33,8 +43,13 @@ module Api
     def copy
       dish = find_dish
       authorize dish
-      new_dish = dish.copy(current_user)
-      save_record new_dish
+      new_dish = dish.dup
+      save_record(new_dish) do |this_dish|
+        Dish.reset_counters(this_dish.id, :user_dishes)
+        UserDish.create!(dish: new_dish,
+                         user: current_user,
+                         dish_owner: true)
+      end
     end
 
     private
@@ -48,13 +63,42 @@ module Api
     end
 
     def dish_params
-      params.permit(:user_id, :name, :price)
+      params.permit(:name, :price, :user_ids)
+    end
+
+    def user_dish_params
+      params.permit(:user_id, :dish_id)
     end
 
     def user_not_authorized
       render json: {error: {dish: {message: 'Debt too large',
                                    limit: Dish::MAX_DEBT}}},
              status: :unauthorized
+    end
+
+    def user_unprocessable_entity
+      render json: {error: {dish: {message: 'Debt too large for some users',
+                                   limit: Dish::MAX_DEBT}}},
+             status: :unprocessable_entity
+    end
+
+    def generate_user_dishes(dish)
+      dish.user_dishes.create!(
+        [
+          {user: current_user, dish_owner: true},
+          *params[:user_ids]&.map { |user_id| {user_id: user_id} },
+        ]
+      )
+    end
+
+    def validate_users_debts
+      users =
+        User.where(id: params[:user_ids]).none? do |user|
+          user.total_debt.to_i < Dish::MAX_DEBT
+        end
+      return if users
+
+      user_unprocessable_entity
     end
   end
 end

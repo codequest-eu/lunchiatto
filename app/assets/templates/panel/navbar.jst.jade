@@ -8,11 +8,13 @@ nav.top-bar(role="navigation", data-topbar='', data-options="mobile_show_parent_
         span
   section.top-bar-section
     ul.right
+      li
+        a(href="/orders/history")  My Orders
       li.balance-label
-          a.unhanded(href="/you")
-            |#{total_debt} PLN
-            if pending_orders_count > 0
-              | &nbsp; (#{pending_debt} PLN including pending orders)
+        a.unhanded(href="/you")
+          |#{total_debt} PLN
+          if pending_orders_exist
+            | &nbsp; (#{pending_debt} PLN including pending orders)
       li
         a(href="/orders/today", data-navigate) Today
       li.has-dropdown

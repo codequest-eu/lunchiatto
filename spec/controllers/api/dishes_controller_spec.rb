@@ -27,6 +27,24 @@ RSpec.describe Api::DishesController, type: :controller do
         post_create(name: nil)
         expect(response).to have_http_status(422)
       end
+      it 'creates user_dishes' do
+        sign_in user
+        expect { post_create }.to change(UserDish, :count).by(1)
+      end
+
+      context '2 users share a dish' do
+        it 'creates 2 user_dishes' do
+          sign_in user
+          post_create_shared
+          expect { post_create_shared }.to change(UserDish, :count).by(2)
+        end
+
+        it 'returns success' do
+          sign_in user
+          post_create_shared
+          expect(response).to have_http_status(:success)
+        end
+      end
 
       def post_create(name: 'Name')
         post :create, order_id: order.id,
@@ -35,12 +53,31 @@ RSpec.describe Api::DishesController, type: :controller do
                       name: name,
                       format: :json
       end
+
+      def post_create_shared(name: 'Name')
+        post :create, order_id: order.id,
+                      user_id: user.id,
+                      user_ids: [other_user.id],
+                      price_cents: 14,
+                      name: name,
+                      format: :json
+      end
     end
   end
 
   describe 'PUT update' do
-    let(:dish) { create :dish, user: user, order: order }
-    let(:other_dish) { create :dish, user: other_user, order: order }
+    let!(:dish) { create :dish, order: order }
+    let!(:user_dish) do
+      create :user_dish, user: user,
+                         dish: dish,
+                         dish_owner: true
+    end
+    let!(:other_dish) { create :dish, order: order }
+    let!(:other_user_dish) do
+      create :user_dish, dish: other_dish,
+                         user: other_user,
+                         dish_owner: true
+    end
     describe 'json' do
       it 'rejects when not logged in' do
         put_update(dish: dish)
@@ -79,7 +116,12 @@ RSpec.describe Api::DishesController, type: :controller do
   end
 
   describe 'DELETE destroy' do
-    let!(:dish) { create :dish, user: user, order: order }
+    let!(:dish) { create :dish, order: order }
+    let!(:user_dish) do
+      create :user_dish, user: user,
+                         dish: dish,
+                         dish_owner: true
+    end
     describe 'json' do
       it 'rejects when not logged in' do
         delete :destroy, order_id: order.id, id: dish.id, format: :json
@@ -106,19 +148,36 @@ RSpec.describe Api::DishesController, type: :controller do
 
   describe 'POST copy' do
     let(:other_user) { create(:other_user) }
-    let!(:dish) { create :dish, user: user, order: order }
+    let!(:dish) { create :dish, order: order }
+    let!(:user_dish) { create :user_dish, user: user, dish: dish }
     describe 'json' do
       it 'copies a new dish' do
         sign_in other_user
         expect { post_copy }.to change(Dish, :count).by(1)
       end
-      it 'doesnt copy a dish if a user already has a dish in that order' do
+      it 'does copy a dish if a user already has a dish in that order' do
         sign_in user
-        expect { post_copy }.not_to change(Dish, :count)
+        expect { post_copy }.to change(Dish, :count).by(1)
       end
       it 'rejects when not logged in' do
         post_copy
         expect(response).to have_http_status(401)
+      end
+      it 'creates new user_dish' do
+        sign_in user
+        expect { post_copy }.to change(UserDish, :count).by(1)
+      end
+      it 'has correct user_dishes_count' do
+        sign_in user
+        post_copy
+        expect(Dish.last.user_dishes_count).to eq(1)
+      end
+      it 'has correct dish_owner' do
+        sign_in other_user
+        post_copy
+        expect(Dish.last.users.count).to eq(1)
+        expect(Dish.last.users.first).to eq(other_user)
+        expect(Dish.last.user_dishes.first.dish_owner).to eq(true)
       end
 
       def post_copy
@@ -128,7 +187,9 @@ RSpec.describe Api::DishesController, type: :controller do
   end
 
   describe 'GET show' do
-    let(:dish) { create :dish, user: user, order: order }
+    let(:dish) { create :dish, order: order }
+    let!(:user_dish) { create :user_dish, user: user, dish: dish }
+
     describe 'json' do
       it 'rejects when not logged in' do
         request_show

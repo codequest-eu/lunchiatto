@@ -9,15 +9,15 @@ class DishSerializer < ActiveModel::Serializer
              :name,
              :order_id,
              :price,
-             :user_id,
-             :user_name
+             :user_name,
+             :user_ids
 
   def price
     object.price.to_s
   end
 
   def user_name
-    object.user.name
+    object.users.map(&:name).join(', ')
   end
 
   def editable
@@ -37,7 +37,11 @@ class DishSerializer < ActiveModel::Serializer
   end
 
   def belongs_to_current_user
-    object.user == current_user
+    object.user_dishes.exists?(user_id: current_user.id, dish_owner: true)
+  end
+
+  def user_ids
+    object.users.ids
   end
 
   private

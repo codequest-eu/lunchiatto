@@ -13,7 +13,7 @@
       totalIncludingPendingBalanceLabel:
         "(#{@collection.totalIncludingPendingBalance()}
         PLN including pending orders)"
-      pendingOrdersCount: App.currentUser.get('pending_orders_count')
+      pendingOrdersExist: App.currentUser.get('pending_orders_exist')
 
     collectionEvents:
       'sync': 'render'

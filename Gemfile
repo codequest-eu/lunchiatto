@@ -81,6 +81,7 @@ group :development do
   gem 'binding_of_caller', '0.7.2'
   gem 'did-you-mean'
   gem 'pry'
+  gem 'meta_request'
 end
 
 group :test do

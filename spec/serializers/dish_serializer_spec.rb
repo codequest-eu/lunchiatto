@@ -2,8 +2,9 @@
 require 'rails_helper'
 
 RSpec.describe DishSerializer do
-  let(:dish) { create(:dish, user: build(:user), order: build(:order)) }
-  let(:user) { dish.user }
+  let(:dish) { create(:dish, order: build(:order)) }
+  let!(:user_dish) { create :user_dish, user: build(:user), dish: dish }
+  let(:user) { dish.users.first }
   let(:current_user) { user }
   subject do
     described_class.new(dish, scope: current_user, scope_name: :current_user)
@@ -15,7 +16,7 @@ RSpec.describe DishSerializer do
 
   describe '#user_name' do
     it 'delegates to user' do
-      expect(subject.user_name).to eq('Bartek Szef')
+      expect(subject.scope.name).to eq('Bartek Szef')
     end
   end
 

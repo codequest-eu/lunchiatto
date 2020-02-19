@@ -27,7 +27,7 @@
       transferLink: @transferLink(@model.get('balance'))
       transferLinkIncludingPendingBalance: @transferLink(@totalBalance())
       adequateUser: @_adequateUser()
-      pendingOrdersCount: App.currentUser.get('pending_orders_count')
+      pendingOrdersExist: App.currentUser.get('pending_orders_exist')
 
     amountClass: ->
       return unless @model.get('balance')

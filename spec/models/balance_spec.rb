@@ -3,9 +3,10 @@ require 'rails_helper'
 
 RSpec.describe Balance do
   context 'given two users' do
-    let(:user_1) { create(:user) }
-    let(:user_2) { create(:other_user) }
-    let(:user_3) { create(:another_user) }
+    let(:company) { create :company }
+    let(:user_1) { create :user, company: company }
+    let(:user_2) { create :other_user, company: company }
+    let(:user_3) { create :another_user, company: company }
 
     shared_context 'pays_for' do |payer, user, amt|
       before do
@@ -106,7 +107,8 @@ RSpec.describe Balance do
       let!(:order) { create :order, :with_ordered_status, user: user_2 }
       let!(:order_2) { create :order, :with_ordered_status, user: user_3 }
       let!(:order_3) { create :order, user: user_3 }
-      let!(:dish) { create :dish, order: order, user: user_1 }
+      let!(:dish) { create :dish, order: order }
+      let!(:user_dish) { create :user_dish, user: user_1, dish: dish }
 
       it 'returns proper pending_debt' do
         expect(user_1.pending_debt).to eq(-dish.price)
@@ -115,8 +117,11 @@ RSpec.describe Balance do
       end
 
       context 'with multiple pending orders' do
-        let!(:dish_2) { create :dish, order: order_2, user: user_1 }
-        let!(:dish_3) { create :dish, order: order_3, user: user_1 }
+        let!(:dish_2) { create :dish, order: order_2 }
+        let!(:user_dish_2) { create :user_dish, user: user_1, dish: dish_2 }
+        let!(:dish_3) { create :dish, order: order_3 }
+        let!(:user_dish_3) { create :user_dish, user: user_1, dish: dish_3 }
+
         let!(:payment) do
           create :payment, user: user_2, payer: user_1, balance: dish.price
         end

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 class User < ActiveRecord::Base
   has_many :orders
+  has_many :user_dishes
+  has_many :dishes, through: :user_dishes
 
   # TODO(anyone): remove user_balances and balances_as_payer
   has_many :user_balances, dependent: :destroy
@@ -32,9 +34,9 @@ class User < ActiveRecord::Base
          :omniauthable,
          omniauth_providers: [:google_oauth2]
 
-  delegate :total_debt, :pending_debt, to: :balance
+  delegate :total_debt, :pending_debt, :pending_balance_for, to: :balance
 
-  NOTIFICATION_DEBT = -30
+  NOTIFIER_DEBT = -30
 
   def balances
     balance = Balance.new(self)
@@ -44,12 +46,12 @@ class User < ActiveRecord::Base
       .reject { |bal| bal.balance == 0 && bal.pending_balance == 0 }
   end
 
-  def pending_orders_count
+  def pending_orders_exist
     Order
       .ordered
-      .joins(:dishes)
-      .where("orders.user_id = #{id} OR dishes.user_id = #{id}")
-      .count
+      .joins(dishes: :user_dishes)
+      .where('orders.user_id = ? OR user_dishes.user_id = ?', id, id)
+      .exists?
   end
 
   def add_first_balance

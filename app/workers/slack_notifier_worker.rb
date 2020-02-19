@@ -4,7 +4,7 @@ class SlackNotifierWorker
 
   def perform
     User.all.active.each do |user|
-      next if user.slack_id.blank? || user.total_debt.to_i > User::NOTIFICATION_DEBT
+      next if user.slack_id.blank? || user.total_debt.to_i > User::NOTIFIER_DEBT
       notifier = Slack::Notifier.new ENV['WEBHOOK_URL'],
                                      channel: "@#{user.slack_id}",
                                      username: 'Shamer'

@@ -18,7 +18,7 @@ class DishPolicy < ApplicationPolicy
   end
 
   def copy?
-    order.in_progress? && !record_belongs_to_user? &&
+    order.in_progress? &&
       (user_debt_permitted? || order_by_current_user?)
   end
 
@@ -34,5 +34,10 @@ class DishPolicy < ApplicationPolicy
 
   def user_debt_permitted?
     Balance.new(user).total_debt.to_f > Dish::MAX_DEBT
+  end
+
+  def record_belongs_to_user?
+    record.users.include?(user) &&
+      record.user_dishes.find_by(user_id: user.id).dish_owner
   end
 end

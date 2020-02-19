@@ -10,8 +10,9 @@ class UserSerializer < ActiveModel::Serializer
              :pending_transfers_count,
              :company_admin,
              :company_id,
-             :pending_orders_count,
-             :current_user
+             :pending_orders_exist,
+             :current_user,
+             :debt_permitted
 
   def total_debt
     object.total_debt.to_s
@@ -31,5 +32,9 @@ class UserSerializer < ActiveModel::Serializer
 
   def current_user
     object.id == scope.id
+  end
+
+  def debt_permitted
+    object.total_debt.to_f > Dish::MAX_DEBT
   end
 end

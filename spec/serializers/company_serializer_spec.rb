@@ -5,7 +5,9 @@ RSpec.describe CompanySerializer do
   let(:company) { create(:company) }
   let!(:first_user) { create(:user, company: company, name: 'Zbigniew') }
   let!(:second_user) { create(:other_user, company: company, name: 'Antoni') }
-  let!(:third_user) { create(:another_user, company: company, name: 'Nieaktywny') }
+  let!(:third_user) do
+    create(:another_user, company: company, name: 'Nieaktywny')
+  end
 
   context 'users' do
     subject { described_class.new company }
