@@ -1,0 +1,9 @@
+{
+  "name": "environment-db-lambda",
+  "private": true,
+  "main": "index.js",
+  "dependencies": {
+    "pg": "^7.12.1",
+    "pg-escape": "^0.2.0"
+  }
+}

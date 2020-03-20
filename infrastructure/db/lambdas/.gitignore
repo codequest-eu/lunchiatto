@@ -1,0 +1,13 @@
+/tmp
+
+/src/node_modules/*/*
+
+!/src/node_modules/*/lib
+!/src/node_modules/*/*.js
+!/src/node_modules/*/package.json
+!/src/node_modules/pg-escape/reserved.txt
+
+/src/node_modules/**/*.min.js
+/src/node_modules/**/*.browser.js
+/src/node_modules/*/test.js
+/src/node_modules/*/tests.js
